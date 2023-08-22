@@ -1,0 +1,387 @@
+[cplayer] Command line options: '-v' '\\192.168.10.13\capture\VTR1_20180123-104611.mxf'
+[cplayer] mpv 0.25.0 (C) 2000-2017 mpv/MPlayer/mplayer2 projects
+[cplayer]  built on Sun Apr 23 03:06:36 CEST 2017
+[cplayer] ffmpeg library versions:
+[cplayer]    libavutil       55.61.100
+[cplayer]    libavcodec      57.93.100
+[cplayer]    libavformat     57.72.101
+[cplayer]    libswscale      4.7.101
+[cplayer]    libavfilter     6.86.100
+[cplayer]    libswresample   2.8.100
+[cplayer] ffmpeg version: N-85608-g7c0d12010f
+[cplayer] 
+[cplayer] Configuration: /home/lachs0r/mingw-w64-cmake/buildroot/build32/packages/mpv-prefix/src/mpv/waf configure --enable-static-build --enable-pdf-build --disable-manpage-build --enable-libmpv-shared --enable-encoding --enable-egl-angle-lib --enable-lua --enable-libarchive --enable-libass --enable-libbluray --enable-dvdread --enable-dvdnav --enable-uchardet --enable-rubberband --enable-lcms2 --prefix=/home/lachs0r/mingw-w64-cmake/buildroot/build32/prefix/mingw
+[cplayer] List of enabled features: asm atomics avutil-imgcpy-uc build-date c11-tls cplayer cuda-hwaccel d3d-hwaccel debug-build direct3d dlopen dos-paths dvdnav dvdread dvdread-common egl-angle egl-angle-lib egl-helpers encoding gcc-tls gl gl-dxinterop gl-win32 glob-win32-replacement gnuc iconv is_ffmpeg jpeg lcms2 libarchive libass libass-osd libav libavcodec libavdevice libbluray libm libmpv-shared lua luajit mingw noexecstack optimize plain-gl posix-or-mingw rubberband sse4-intrinsics static-build stdatomic subprocess tv uchardet wasapi win32 win32-internal-pthreads zlib
+[global] config path: '' -> 'C:\Users\i7-5960x\AppData\Roaming/mpv'
+[global] config path: 'mpv.conf' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/mpv.conf'
+[global] config path: 'config' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/config'
+[global] config path: 'mpv.conf' -/-> 'C:/util/mpv-i686-20170423/mpv.conf'
+[global] config path: 'config' -/-> 'C:/util/mpv-i686-20170423/config'
+[global] config path: 'mpv.conf' -/-> 'C:/util/mpv-i686-20170423/mpv/mpv.conf'
+[global] config path: 'config' -/-> 'C:/util/mpv-i686-20170423/mpv/config'
+[cplayer] Setting option 'v' = '' (flags = 8)
+[global] config path: 'input.conf' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/input.conf'
+[global] config path: 'input.conf' -/-> 'C:/util/mpv-i686-20170423/input.conf'
+[global] config path: 'input.conf' -> 'C:/util/mpv-i686-20170423/mpv/input.conf'
+[global] user path: 'C:/util/mpv-i686-20170423/mpv/input.conf' -> 'C:/util/mpv-i686-20170423/mpv/input.conf'
+[ifo] Opening C:/util/mpv-i686-20170423/mpv/input.conf
+[ifo_dvdnav] Opening C:/util/mpv-i686-20170423/mpv/input.conf
+[bdmv/bluray] Opening C:/util/mpv-i686-20170423/mpv/input.conf
+[file] Opening C:/util/mpv-i686-20170423/mpv/input.conf
+[file] Stream opened successfully.
+[input] Parsing input config file C:/util/mpv-i686-20170423/mpv/input.conf
+[input] Input config file C:/util/mpv-i686-20170423/mpv/input.conf parsed: 6 binds
+[osc] Loading lua script @osc.lua...
+[global] config path: 'scripts' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/scripts'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/scripts'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/mpv/scripts'
+[osc] loading mp.defaults
+[osc] loading @osc.lua
+[global] config path: 'lua-settings/osc.conf' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/lua-settings/osc.conf'
+[global] config path: 'lua-settings/osc.conf' -/-> 'C:/util/mpv-i686-20170423/lua-settings/osc.conf'
+[global] config path: 'lua-settings/osc.conf' -/-> 'C:/util/mpv-i686-20170423/mpv/lua-settings/osc.conf'
+[osc] lua-settings/osc.conf not found. 
+[cplayer] Run command: define-section, flags=0, args=[showhide, mouse_move script-binding osc/__keybinding1
+[cplayer] mouse_leave script-binding osc/__keybinding2
+[cplayer] , force]
+[cplayer] Run command: enable-section, flags=0, args=[showhide, allow-hide-cursor+allow-vo-dragging]
+[cplayer] Run command: define-section, flags=0, args=[input, mouse_btn0 script-binding osc/__keybinding3
+[cplayer] shift+mouse_btn0 script-binding osc/__keybinding4
+[cplayer] mouse_btn2 script-binding osc/__keybinding5
+[cplayer] mouse_btn3 script-binding osc/__keybinding6
+[cplayer] mouse_btn4 script-binding osc/__keybinding7
+[cplayer] mouse_btn0_dbl ignore
+[cplayer] shift+mouse_btn0_dbl ignore
+[cplayer] mouse_btn2_dbl ignore
+[cplayer] , force]
+[cplayer] Run command: enable-section, flags=0, args=[input, ]
+[cplayer] Run command: define-section, flags=0, args=[input_osc, del script-binding osc/__keybinding8
+[cplayer] , default]
+[cplayer] Run command: enable-section, flags=0, args=[input_osc, allow-hide-cursor+allow-vo-dragging]
+[cplayer] Run command: define-section, flags=0, args=[input_forced_osc, , force]
+[cplayer] Run command: enable-section, flags=0, args=[input_forced_osc, allow-hide-cursor+allow-vo-dragging]
+[cplayer] Done loading @osc.lua.
+[ytdl_hook] Loading lua script @ytdl_hook.lua...
+[global] config path: 'scripts' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/scripts'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/scripts'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/mpv/scripts'
+[ytdl_hook] loading mp.defaults
+[cplayer] Run command: disable-section, flags=0, args=[input]
+[global] config path: 'fonts' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/fonts'
+[global] config path: 'fonts' -/-> 'C:/util/mpv-i686-20170423/fonts'
+[global] config path: 'fonts' -/-> 'C:/util/mpv-i686-20170423/mpv/fonts'
+[ytdl_hook] loading @ytdl_hook.lua
+[cplayer] Run command: hook-add, flags=0, args=[on_load, 1, 10]
+[cplayer] Run command: hook-add, flags=0, args=[on_preloaded, 2, 10]
+[cplayer] Done loading @ytdl_hook.lua.
+[osd/libass] Shaper: FriBidi 0.19.7 (SIMPLE) HarfBuzz-ng 1.4.5 (COMPLEX)
+[global] config path: 'scripts' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/scripts'
+[global] config path: 'subfont.ttf' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/subfont.ttf'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/scripts'
+[global] config path: 'subfont.ttf' -/-> 'C:/util/mpv-i686-20170423/subfont.ttf'
+[global] config path: 'scripts' -/-> 'C:/util/mpv-i686-20170423/mpv/scripts'
+[global] config path: 'subfont.ttf' -/-> 'C:/util/mpv-i686-20170423/mpv/subfont.ttf'
+[global] config path: 'watch_later' -> 'C:\Users\i7-5960x\AppData\Roaming/mpv/watch_later'
+[global] config path: 'fonts.conf' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/fonts.conf'
+[cplayer] Playing: \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[cplayer] Running hook: ytdl_hook/on_load
+[global] config path: 'fonts.conf' -/-> 'C:/util/mpv-i686-20170423/fonts.conf'
+[global] config path: 'fonts.conf' -/-> 'C:/util/mpv-i686-20170423/mpv/fonts.conf'
+[osd/libass] Setting up fonts...
+[osd/libass] Using font provider directwrite
+[osd/libass] Done.
+[cplayer] Run command: hook-ack, flags=0, args=[on_load]
+[ifo] Opening \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[ifo_dvdnav] Opening \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[bdmv/bluray] Opening \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[file] Opening \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[file] Stream opened successfully.
+[cache] Cache size set to 150000 KiB (75000 KiB backbuffer)
+[demux] Trying demuxers for level=normal.
+[lavf] Found 'mxf' at score=100 size=2048.
+[cache] Dropping cache at pos 1813043615, cached range: 0-196608.
+[cache] Seeking underlying stream: 196608 -> 1813043615
+[cache] EOF reached.
+[cache] EOF reached.
+[cache] Dropping cache at pos 1813043200, cached range: 1813043615-1813043619.
+[cache] Seeking underlying stream: 1813043619 -> 1813043200
+[cache] EOF reached.
+[cache] EOF reached.
+[cache] Dropping cache at pos 0, cached range: 1813043200-1813043619.
+[cache] Seeking underlying stream: 1813043619 -> 0
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.02.53.01.01.0d.01.01.01.01.01.23.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1813039104, cached range: 0-327680.
+[cache] Seeking underlying stream: 327680 -> 1813039104
+[cache] EOF reached.
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.02.05.01.01.0d.01.02.01.01.11.01.00
+[cache] Dropping cache at pos 1761095168, cached range: 1813039104-1813043619.
+[cache] Seeking underlying stream: 1813043619 -> 1761095168
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1702469120, cached range: 1761095168-1761226240.
+[cache] Seeking underlying stream: 1761226240 -> 1702469120
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1643843072, cached range: 1702469120-1702600192.
+[cache] Seeking underlying stream: 1702600192 -> 1643843072
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1585217024, cached range: 1643843072-1643974144.
+[cache] Seeking underlying stream: 1643974144 -> 1585217024
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1526593024, cached range: 1585217024-1585348096.
+[cache] Seeking underlying stream: 1585348096 -> 1526593024
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1467970048, cached range: 1526593024-1526724096.
+[cache] Seeking underlying stream: 1526724096 -> 1467970048
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1409344512, cached range: 1467970048-1468101120.
+[cache] Seeking underlying stream: 1468101120 -> 1409344512
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1350719488, cached range: 1409344512-1409475584.
+[cache] Seeking underlying stream: 1409475584 -> 1350719488
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1292097536, cached range: 1350719488-1350850560.
+[cache] Seeking underlying stream: 1350850560 -> 1292097536
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1233472512, cached range: 1292097536-1292228608.
+[cache] Seeking underlying stream: 1292228608 -> 1233472512
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1174846976, cached range: 1233472512-1233603584.
+[cache] Seeking underlying stream: 1233603584 -> 1174846976
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1116221440, cached range: 1174846976-1174978048.
+[cache] Seeking underlying stream: 1174978048 -> 1116221440
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 1057595392, cached range: 1116221440-1116352512.
+[cache] Seeking underlying stream: 1116352512 -> 1057595392
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 998969344, cached range: 1057595392-1057726464.
+[cache] Seeking underlying stream: 1057726464 -> 998969344
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 940343808, cached range: 998969344-999100416.
+[cache] Seeking underlying stream: 999100416 -> 940343808
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 881719808, cached range: 940343808-940474880.
+[cache] Seeking underlying stream: 940474880 -> 881719808
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 823094272, cached range: 881719808-881850880.
+[cache] Seeking underlying stream: 881850880 -> 823094272
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 764468224, cached range: 823094272-823225344.
+[cache] Seeking underlying stream: 823225344 -> 764468224
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 705842688, cached range: 764468224-764599296.
+[cache] Seeking underlying stream: 764599296 -> 705842688
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 647216640, cached range: 705842688-705973760.
+[cache] Seeking underlying stream: 705973760 -> 647216640
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 588590592, cached range: 647216640-647347712.
+[cache] Seeking underlying stream: 647347712 -> 588590592
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 529965568, cached range: 588590592-588721664.
+[cache] Seeking underlying stream: 588721664 -> 529965568
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 471341056, cached range: 529965568-530096640.
+[cache] Seeking underlying stream: 530096640 -> 471341056
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 412716544, cached range: 471341056-471472128.
+[cache] Seeking underlying stream: 471472128 -> 412716544
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 354091008, cached range: 412716544-412847616.
+[cache] Seeking underlying stream: 412847616 -> 354091008
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 295464448, cached range: 354091008-354222080.
+[cache] Seeking underlying stream: 354222080 -> 295464448
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 236161536, cached range: 295464448-295595520.
+[cache] Seeking underlying stream: 295595520 -> 236161536
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 177529856, cached range: 236161536-236292608.
+[cache] Seeking underlying stream: 236292608 -> 177529856
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 118910464, cached range: 177529856-177660928.
+[cache] Seeking underlying stream: 177660928 -> 118910464
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 60292608, cached range: 118910464-119041536.
+[cache] Seeking underlying stream: 119041536 -> 60292608
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[ffmpeg/demuxer] mxf: Dark key 06.0e.2b.34.01.01.01.01.03.01.02.10.01.00.00.00
+[cache] Dropping cache at pos 8192, cached range: 60292608-60423680.
+[cache] Seeking underlying stream: 60423680 -> 8192
+[ffmpeg/demuxer] mxf: mpeg2video: Universal Label: 060e2b34.0401.0103.04010202.01040300
+[ffmpeg/demuxer] mxf: none: Universal Label: 00000000.0000.0000.00000000.00000000
+[ffmpeg/demuxer] mxf: none: Universal Label: 00000000.0000.0000.00000000.00000000
+[ffmpeg/demuxer] mxf: none: Universal Label: 00000000.0000.0000.00000000.00000000
+[ffmpeg/demuxer] mxf: none: Universal Label: 00000000.0000.0000.00000000.00000000
+[lavf] avformat_find_stream_info() finished after 5108914 bytes.
+[demux] Detected file format: mxf (libavformat)
+[cache] blocking for STREAM_CTRL 6
+[cplayer] Opening done: \\192.168.10.13\capture\VTR1_20180123-104611.mxf
+[find_files] Loading external files in \\192.168.10.13\capture\
+[global] config path: 'sub' -/-> 'C:\Users\i7-5960x\AppData\Roaming/mpv/sub'
+[global] config path: 'sub' -/-> 'C:/util/mpv-i686-20170423/sub'
+[global] config path: 'sub' -/-> 'C:/util/mpv-i686-20170423/mpv/sub'
+[cplayer] Running hook: ytdl_hook/on_preloaded
+[cplayer] Run command: hook-ack, flags=0, args=[on_preloaded]
+[cplayer]  (+) Video --vid=1 (mpeg2video 1920x1080 29.970fps)
+[cplayer]  (+) Audio --aid=1 (pcm_s24le 1ch 48000Hz)
+[cplayer]      Audio --aid=2 (pcm_s24le 1ch 48000Hz)
+[cplayer]      Audio --aid=3 (pcm_s24le 1ch 48000Hz)
+[cplayer]      Audio --aid=4 (pcm_s24le 1ch 48000Hz)
+[vo/opengl] Initializing OpenGL backend 'angle'
+[vo/opengl] Using Direct3D 11 feature level 11_0
+[vo/opengl] EGL_VERSION=1.4 (ANGLE 2.1.0.966c940b0d45)
+[vo/opengl] EGL_VENDOR=Google Inc. (adapter LUID: 0000000000033716)
+[vo/opengl] EGL_CLIENT_APIS=OpenGL_ES
+[vo/opengl] Trying to create GLES 3.x context.
+[vo/opengl] Using DXGI 1.2+
+[vo/opengl] Using flip-model presentation
+[vo/opengl] GL_VERSION='OpenGL ES 3.0 (ANGLE 2.1.0.966c940b0d45)'
+[vo/opengl] Detected GLES 3.0.
+[vo/opengl] GL_VENDOR='Google Inc.'
+[vo/opengl] GL_RENDERER='ANGLE (NVIDIA GeForce GT 630  Direct3D11 vs_5_0 ps_5_0)'
+[vo/opengl] GL_SHADING_LANGUAGE_VERSION='OpenGL ES GLSL ES 3.00 (ANGLE 2.1.0.966c940b0d45)'
+[vo/opengl] Loaded extension GL_EXT_texture_norm16.
+[vo/opengl] Loaded extension GL_EXT_color_buffer_half_float.
+[vo/opengl] Loaded extension GL_EXT_disjoint_timer_query.
+[vo/opengl] Loaded extension GL_ANGLE_translated_shader_source.
+[vo/opengl] 16 bit texture depth: 16.
+[vo/opengl] Testing FBO format 0x805b
+[vo/opengl] Create FBO: 16x16 (16x16)
+[vo/opengl] Using FBO format 0x805b.
+[vo/opengl] No advanced processing required. Enabling dumb mode.
+[vo/opengl/win32] DPI detected from the old API: 96
+[vo/opengl/win32] display-fps: 59.950000
+[vo/opengl/win32] color-profile: C:\Windows\system32\spool\drivers\color\sRGB Color Space Profile.icm
+[vo/opengl] Assuming 59.950000 FPS for display sync.
+[vd] Container reported FPS: 29.970030
+[vd] Codec list:
+[vd]     mpeg2video - MPEG-2 video
+[vd]     mpegvideo (mpeg2video) - MPEG-1 video
+[vd]     mpeg2_cuvid (mpeg2video) - Nvidia CUVID MPEG2VIDEO decoder
+[vd] Opening video decoder mpeg2video
+[vd] Using software decoding.
+[vd] Detected 16 logical cores.
+[vd] Requesting 16 threads for decoding.
+[vd] Selected video codec: mpeg2video (MPEG-2 video)
+[ad] Codec list:
+[ad]     pcm_s24le - PCM signed 24-bit little-endian
+[ad] Opening audio decoder pcm_s24le
+[ad] Requesting 1 threads for decoding.
+[ad] Selected audio codec: pcm_s24le (PCM signed 24-bit little-endian)
+[cplayer] Starting playback...
+[af] Audio filter chain:
+[af]   [in] 48000Hz mono 1ch s32
+[af]   [out] 48000Hz mono 1ch s32
+[af]   [ao] 48000Hz mono 1ch s32
+[ao] Trying audio driver 'wasapi'
+[ao/wasapi] requested format: 48000 Hz, mono channels, s32
+[ao/wasapi] No device specified. Selecting default.
+[ao/wasapi] Selecting device '{acf59b43-e6a9-4854-8b6f-c7462d42ddb8}' (스피커(Realtek High Definition Audio))
+[ao/wasapi] Monitoring changes in device {0.0.0.00000000}.{acf59b43-e6a9-4854-8b6f-c7462d42ddb8}
+[ao/wasapi] Trying mono s32 @ 48000hz (shared) -> ok
+[ao/wasapi] Accepted as mono s32 @ 48000hz (shared)
+[ao/wasapi] Device period: 10 ms
+[ao/wasapi] Buffer frame count: 2400 (50 ms)
+[ao/wasapi] IAudioClock::GetFrequency gave a frequency of 192000.
+[ao/wasapi] device buffer: 2400 samples.
+[ao/wasapi] using soft-buffer of 9600 samples.
+[cplayer] AO: [wasapi] 48000Hz mono 1ch s32
+[cplayer] AO: Description: Windows WASAPI audio output (event mode)
+[vd] Decoder format: 1920x1080 yuv422p bt.709/bt.709/bt.1886/limited CL=unknown
+[vd] Using container aspect ratio.
+[vf] Video filter chain:
+[vf]   [in] 1920x1080 yuv422p bt.709/bt.709/bt.1886/limited CL=unknown
+[vf]   [out] 1920x1080 yuv422p bt.709/bt.709/bt.1886/limited CL=unknown
+[cplayer] VO: [opengl] 1920x1080 yuv422p
+[cplayer] VO: Description: Extended OpenGL Renderer
+[vo/opengl/win32] requested window size larger than the screen
+[vo/opengl/win32] reset window bounds: 0:35:1920:1109
+[vo/opengl/win32] resize window: 1904:1071
+[vo/opengl] Resize: 1920x1080
+[vo/opengl] Window size: 1920x1080
+[vo/opengl] Video source: 1920x1080 (1:1)
+[vo/opengl] Video display: (0, 0) 1920x1080 -> (0, 0) 1920x1080
+[vo/opengl] Video scale: 1.000000/1.000000
+[vo/opengl] OSD borders: l=0 t=0 r=0 b=0
+[vo/opengl] Video borders: l=0 t=0 r=0 b=0
+[vo/opengl] Testing FBO format 0x805b
+[vo/opengl] Create FBO: 16x16 (16x16)
+[vo/opengl] Using FBO format 0x805b.
+[vo/opengl] No advanced processing required. Enabling dumb mode.
+[vo/opengl] Texture for plane 0: 1920x1080
+[vo/opengl] Texture for plane 1: 960x1080
+[vo/opengl] Texture for plane 2: 960x1080
+[cplayer] set video colors output-levels=0 
+[vo/opengl] Resize: 1904x1071
+[vo/opengl] Window size: 1904x1071
+[vo/opengl] Video source: 1920x1080 (1:1)
+[vo/opengl] Video display: (0, 0) 1920x1080 -> (0, 0) 1904x1071
+[vo/opengl] Video scale: 0.991667/0.991667
+[vo/opengl] OSD borders: l=0 t=0 r=0 b=0
+[vo/opengl] Video borders: l=0 t=0 r=0 b=0
+[vo/opengl] Reported display depth: 8
+[vo/opengl] new shader program:
+[vo/opengl] [  1] color.r = 1.000000 * vec4(texture(texture0, texcoord0)).r;
+[vo/opengl] [  2] color.g = 1.000000 * vec4(texture(texture1, texcoord1)).r;
+[vo/opengl] [  3] color.b = 1.000000 * vec4(texture(texture2, texcoord2)).r;
+[vo/opengl] [  4] // color conversion
+[vo/opengl] [  5] color = color.rgba;
+[vo/opengl] [  6] color.rgb = mat3(colormatrix) * color.rgb + colormatrix_c;
+[vo/opengl] [  7] color.a = 1.0;
+[vo/opengl] [  8] // color mapping
+[vo/opengl] shader link log (status=1): 
+[vo/opengl] 
+[vo/opengl] 
+[vo/opengl] 
+[osd/libass] fontselect: (sans-serif, 400, 0) -> ArialMT, 0, ArialMT
+[cplayer] first video frame after restart shown
+[cplayer] starting audio playback
+[cplayer] playback restart complete
+[cplayer] Run command: quit, flags=9, args=[0]
+[cplayer] EOF code: 6  
+[ad] Uninit audio decoder.
+[vd] Uninit video.
+[cache] Terminating cache...
+[cache] Cache exiting...
+[cplayer] finished playback, success (reason 3)
+[cplayer] 
+[cplayer] 
+[cplayer] Exiting... (Quit)
+[ytdl_hook] Exiting...
+[osc] Exiting...
+[vo/opengl] flushing shader cache
+[vo/opengl/win32] uninit
