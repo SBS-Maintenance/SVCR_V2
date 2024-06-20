@@ -40,7 +40,8 @@ printobjectlist(list_address)
 cmdrec = _REC__          ; protocol string, REC, STOP, EE(by Kim Syehoon)
 cmdstop = _STOP_
 cmdsettitle = _SETT_
-cmdEE=_EE_
+cmdee=_EE_
+cmdtarget=_TRGT_
 
 remote_panel_x := 250
 remote_panel_y := A_ScreenHeight - 600
@@ -54,7 +55,7 @@ gui, add, button, xm yp+30 w110 h40 gbutton2 hwndhbutton2, STOP
 gui, add, progress, xm yp+42 w110 h10 cblue hwndhbluebar, 100
 
 gui, add, button, xm yp+30 w110 h40 gbutton3 hwndhbutton3, EE
-
+gui, add, button, xm yp+60 w110 h40 gbutton4 hwndhbutton4, Target
 ; gui, add, text, xm yp+60 w160 h40 hwndhtext,  REMOTE.2020
 gui, add, text, xm yp+90 w160 h40 hwndhtext,  REMOTE.2024 by Kim Syehoon
 Gui, add, StatusBar, hwndhstatus, Application Start
@@ -125,6 +126,32 @@ button3:
 GuiControl,, %hstatus%,  %count_success% client(s) accepted 
 return
 
+button4:
+path_dst := selectfolder(path_dst)
+count_success := 0
+Loop, % list_address.MaxIndex()
+{
+    ipaddress:=list_address[A_index]
+    if((sendresult:=sendcommand(ipaddress,"_TRGT_" . path_dst))>0)
+        count_success += 1
+}
+  GuiControl,, %hstatus%,  %count_success% client(s) accepted 
+return
+
+selectfolder(folder)
+{
+	folder_old := folder
+	FileSelectFolder, OutputVar, *%folder%, 3, Select Target Folder          ; option 3 = create new folder, paste text path is possible  2018/1/15
+
+	if OutputVar =                       ; Select cancel
+		return folder_old
+	else
+	{
+		path_dst :=RegExReplace(OutputVar, "\\$")  ; Removes the trailing backslash, if present.
+		path_dst =%path_dst%\
+		return path_dst
+	}
+}
 
 ~!Down::    ; get panel 1 text and send to network remote gang
 count_success := 0

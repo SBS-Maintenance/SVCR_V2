@@ -165,6 +165,7 @@ gui, add, button, xp+70 yp  w80 h30 gstart_rec  hwndhstart_rec, start rec       
 gui, add, button, xp+100 yp w80 h30 gstop_rec  hwndhstop_rec, stop rec  ; stop recording button
 Gui, add, DDL, xp+100 yp+5 w130 vcodec_choice hwndhcodec_choice choose%codec_default% gcodec_change, XDCAM50_MXF|XDCAM50_MOV|XDCAM_EX_MXF|PRORES_LT_MOV|PRORES_MOV|PRORES_HQ_MOV|MPEG2_TS|AUD_LOGGING|UHD_4K_MXF|UHD_4K_TS|UHD_4K_PRORES|STREAM|test
 gui, add, button, xp+150 yp-5 w80 h30 gsel_target hwndhsel_target, Sel Target
+gui, add, button, xp+100 yp w1 h1 gset_target hwndset_target, Set Target
 gui, add, edit, xm+20 yp+40  w350 h25 vfile_userinput, %CHNAME%
 gui, add, text, xp+360 yp+5  w200 h15 hwndhrectimedisplay,  Time              ; display record time
 
@@ -1263,6 +1264,13 @@ close_mpv(pid)
 }
 
 
+set_target:
+IniRead, path_dst, target.ini, Target, path
+guicontrol,,%htext1%,  Target : %path_dst%
+guicontrol,,%hstatus%, Target Folder is %path_dst% (%A_DD% %A_Hour%:%A_Min%.%A_Sec%)
+IniWrite, %path_dst%, svcr%channel_index%.ini, path, target                  ; write ini immediately after selecting target
+updatelog("Selected target is " . path_dst)
+return
 
 
 

@@ -72,6 +72,7 @@ cmdrec = _REC__          ; protocol string, REC, STOP, EE(by Kim Syehoon)
 cmdstop = _STOP_
 cmdsettitle = _SETT_
 cmdee=_EE_
+cmdsettarget=_TRGT_
 
 loop, 5
 {
@@ -175,6 +176,7 @@ gui, add, button, w50 h20 glaunch3 hwndhlaunch3, VTR3
 gui, add, button, w50 h20 glaunch4 hwndhlaunch4, VTR4
 gui, add, button, w50 h20 glaunch5 hwndhlaunch5, VTR5
 gui, add, button, x130 y70 w40 h30 gresetposition hwndhresetposition, EE
+gui, add, button, x130 y120 w40 h30 gsettarget hwndsettarget , Target
 gui, add, button, x10 y350 w90 h20 gschedule, SCHEDULER
 gui, add, button, x110 yp w60 h20 geditor, EDITOR
 gui, add, picture, x140 y1 gnamesetting, .\icon\setting30.png
@@ -250,7 +252,7 @@ return
 
 ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvData = 0, bRecvDataLength = 0) 
 {
-	Global hbutton1, hbutton2, hresetposition, cmdrec, cmdstop, cmdee, cmdsettitle, title_received
+	Global hbutton1, hbutton2, hresetposition, cmdrec, cmdstop, cmdee, cmdsettitle, cmdsettarget,title_received
 	OutputDebug, %sEvent%, %bRecvData%, %bRecvDataLength%
 	
 	; add tooltip command doesn't help debugging. this function always finish with TCP disconnect command (bRecvData=0, bRecvDataLength=0)
@@ -278,6 +280,18 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 		{
 			ControlClick,, ahk_id %hresetposition%,,,1
 		}
+
+	if cmd_header = %cmdsettarget%
+	{
+		path_dst := SubStr(bRecvData, 7)
+		OutputDebug, Set target command received %path_dst%
+		IniWrite, %path_dst%, target.ini, Target, path
+
+		loop, 5
+		{
+		ControlClick,Button6,  % title%A_index%
+		}
+	}
     
 }
 
@@ -406,6 +420,36 @@ loop, 5
 
 
 return
+
+settarget:
+WinGet, windowlist, List, VCR SCHEDULER  
+path_dst := selectfolder(path_dst)
+loop, %windowlist%
+	{
+		WinActivate,  % "ahk_id " . windowlist%A_Index%
+	}
+IniWrite, %path_dst%, target.ini, Target, path
+
+loop, 5
+{
+	ControlClick,Button6,  % title%A_index%
+}
+return
+selectfolder(folder)
+{
+	folder_old := folder
+	FileSelectFolder, OutputVar, *%folder%, 3, Select Target Folder          ; option 3 = create new folder, paste text path is possible  2018/1/15
+
+	if OutputVar =                       ; Select cancel
+		return folder_old
+	else
+	{
+		path_dst :=RegExReplace(OutputVar, "\\$")  ; Removes the trailing backslash, if present.
+		path_dst =%path_dst%\
+		return path_dst
+	}
+}
+
 
 GuiContextMenu:
 Gui, Submit, NoHide
