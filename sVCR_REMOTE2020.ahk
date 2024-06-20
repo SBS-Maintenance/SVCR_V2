@@ -37,12 +37,13 @@ title_vtrpanel := "SBS sVCR v2-" . CHNAME . " by sendust"
 printobjectlist(list_address)
 
 
-cmdrec = _REC__          ; protocol string, REC, STOP
+cmdrec = _REC__          ; protocol string, REC, STOP, EE(by Kim Syehoon)
 cmdstop = _STOP_
 cmdsettitle = _SETT_
+cmdEE=_EE_
 
 remote_panel_x := 250
-remote_panel_y := A_ScreenHeight - 500
+remote_panel_y := A_ScreenHeight - 600
  
 gui, new,, Gang REMOTE%remotenumber%
 gui, margin, 10
@@ -52,7 +53,10 @@ gui, add, progress, xm yp+42 w110 h10 cred hwndhredbar, 100
 gui, add, button, xm yp+30 w110 h40 gbutton2 hwndhbutton2, STOP
 gui, add, progress, xm yp+42 w110 h10 cblue hwndhbluebar, 100
 
-gui, add, text, xm yp+60 w160 h40 hwndhtext,  REMOTE.2020
+gui, add, button, xm yp+30 w110 h40 gbutton3 hwndhbutton3, EE
+
+; gui, add, text, xm yp+60 w160 h40 hwndhtext,  REMOTE.2020
+gui, add, text, xm yp+90 w160 h40 hwndhtext,  REMOTE.2024 by Kim Syehoon
 Gui, add, StatusBar, hwndhstatus, Application Start
 gui, show, x%remote_panel_x% y%remote_panel_y%  w160
 gui, -MinimizeBox
@@ -106,6 +110,19 @@ button2:
         GuiControl, Show, %hbluebar%
 
     GuiControl,, %hstatus%,  %count_success% client(s) accepted 
+return
+
+button3:
+    count_success := 0
+
+    Loop, % list_address.MaxIndex()
+        {
+            ipaddress := list_address[A_index]
+            if(sendresult:=sendcommand(ipaddress,cmdee))=12
+                count_success+=1
+        }
+
+GuiControl,, %hstatus%,  %count_success% client(s) accepted 
 return
 
 

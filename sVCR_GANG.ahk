@@ -68,10 +68,10 @@ name_array := Object()
 win_position_x := Object()
 win_position_y := Object()
 listenport := 3441 	      ; listen port for remote control
-cmdrec = _REC__          ; protocol string, REC, STOP
+cmdrec = _REC__          ; protocol string, REC, STOP, EE(by Kim Syehoon)
 cmdstop = _STOP_
 cmdsettitle = _SETT_
-
+cmdee=_EE_
 
 loop, 5
 {
@@ -174,7 +174,7 @@ gui, add, button, w50 h20 glaunch2 hwndhlaunch2, VTR2
 gui, add, button, w50 h20 glaunch3 hwndhlaunch3, VTR3
 gui, add, button, w50 h20 glaunch4 hwndhlaunch4, VTR4
 gui, add, button, w50 h20 glaunch5 hwndhlaunch5, VTR5
-gui, add, button, x130 y70 w40 h30 gresetposition, EE
+gui, add, button, x130 y70 w40 h30 gresetposition hwndhresetposition, EE
 gui, add, button, x10 y350 w90 h20 gschedule, SCHEDULER
 gui, add, button, x110 yp w60 h20 geditor, EDITOR
 gui, add, picture, x140 y1 gnamesetting, .\icon\setting30.png
@@ -250,7 +250,7 @@ return
 
 ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvData = 0, bRecvDataLength = 0) 
 {
-	Global hbutton1, hbutton2, cmdrec, cmdstop, cmdsettitle, title_received
+	Global hbutton1, hbutton2, hresetposition, cmdrec, cmdstop, cmdee, cmdsettitle, title_received
 	OutputDebug, %sEvent%, %bRecvData%, %bRecvDataLength%
 	
 	; add tooltip command doesn't help debugging. this function always finish with TCP disconnect command (bRecvData=0, bRecvDataLength=0)
@@ -273,6 +273,11 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 		OutputDebug, Set title command received %title_received%
 		SetTimer, paste_title_network, -20
 	}
+
+	if cmd_header=%cmdee%
+		{
+			ControlClick,, ahk_id %hresetposition%,,,1
+		}
     
 }
 
