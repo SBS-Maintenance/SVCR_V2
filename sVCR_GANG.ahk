@@ -292,10 +292,9 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 		path_dst := SubStr(bRecvData, 7)
 		OutputDebug, Set target command received %path_dst%
 		IniWrite, %path_dst%, target.ini, Target, path
-
-		loop, 5
+		loop,5
 		{
-		ControlClick,Button6,  % title%A_index%
+			send_udp_text("127.0.0.1", remoteport%A_Index%, "_SETTARGET___")
 		}
 	}
     

@@ -215,9 +215,11 @@ remote_control := Object()						; Remote command list object
 remote_control.cmd["start_rec"] := "__START_REC__"		; 13 character
 remote_control.cmd["stop_rec"] := "__STOP_REC___"
 remote_control.cmd["preview"] := "___PREVIEW___"
+remote_control.cmd["settarget"]:="_SETTARGET___"
 remote_control.handle["start_rec"] := hstart_rec
 remote_control.handle["stop_rec"] := hstop_rec
 remote_control.handle["preview"] := hpreview
+remote_control.handle["settarget"]:=hsettarget
 
 printobjectlist(cmdlist.handle)
 
@@ -1549,6 +1551,8 @@ onUDPRecv(this)			; FFMPEG Progress status UDP stream
 			updatelog("Remote command [" . string . "] arrived")
 			FileAppend, `n%k% -- %v%,  *
 			GuiControlGet, outputvar, Enabled, % remote_control.handle[k]			; Check if button is enabled
+			if (k="settarget")
+				SetTimer,set_target,-1
 			if outputvar
 				SetTimer, %k%, -1
 			else
