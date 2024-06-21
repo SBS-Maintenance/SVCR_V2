@@ -277,9 +277,15 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 	}
 
 	if cmd_header=%cmdee%
+	{
+		loop,5
 		{
-			ControlClick,, ahk_id %hresetposition%,,,1
+			SetTimer, launch%A_index%, -1
+			WinActivate, % title%A_index%
+			winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%
 		}
+		SetTimer, resetposition, -1
+	}
 
 	if cmd_header = %cmdsettarget%
 	{
