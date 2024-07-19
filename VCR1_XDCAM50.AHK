@@ -1332,7 +1332,7 @@ SetTimer, SetMPVtitle, -1000
 updatelog("MPV Preview started with pid " . pid_mpv_preview)
 ; ------------------------------------ Run EE Preview ------------------------------------------
 
-SetTimer, mpv_check, -2000
+SetTimer, mpv_check, -4000
 updatelog("mpv_check timer started")
 return
 

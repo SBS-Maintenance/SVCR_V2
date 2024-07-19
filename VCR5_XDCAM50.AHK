@@ -59,6 +59,7 @@ flag_ccg_ee := 0							; CONFI Video play with Caspar CG added 2021/4/15		(value
 binary_ffmpeg = %A_WorkingDir%\bin\ffmpeg2018.exe
 binary_mpv = %A_WorkingDir%\bin\mpv-x86_64-20181002\mpv.com			; under testing.. 2019/6/4
 binary_mpv = %A_WorkingDir%\bin\mpv-i686-20170423\mpv.com
+binary_mpv = %A_WorkingDir%\bin\mpv\mpv.com
 binary_ffmpeg_uhd = %A_WorkingDir%\bin\ffmpeg_decklink3.exe			; Modified 2019/12/2
 binary_ffmpeg_uhd = %A_WorkingDir%\bin\ffmpeg2020_11.5.1.exe			; Modified 2020/6/9
 binary_copymanager = copymanager.%ahk_exe%
@@ -1331,7 +1332,7 @@ SetTimer, SetMPVtitle, -1000
 updatelog("MPV Preview started with pid " . pid_mpv_preview)
 ; ------------------------------------ Run EE Preview ------------------------------------------
 
-SetTimer, mpv_check, -2000
+SetTimer, mpv_check, -4000
 updatelog("mpv_check timer started")
 return
 
