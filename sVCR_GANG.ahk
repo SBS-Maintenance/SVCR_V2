@@ -284,7 +284,10 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 			WinActivate, % title%A_index%
 			winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%
 		}
-		SetTimer, resetposition, -1
+
+		; SetTimer, resetposition, -1
+		SetTimer,previewstart,-3000
+	
 	}
 
 	if cmd_header = %cmdsettarget%
@@ -299,6 +302,7 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 	}
     
 }
+
 
 namesetting:
 IfWinNotExist, sVCR Configurator
@@ -412,19 +416,26 @@ loop, %windowlist%
 	WinActivate,  % "ahk_id " . windowlist%A_Index%
 }
 
-loop, 5
-	winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%   ; reposition control panel
+; loop, 5
+
 
 loop, 5
 {
 	;ControlFocus, button2, % title%A_Index%
 	;ControlClick, button2, % title%A_Index%,,,1,NA  ; click EE button
+	winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%   ; reposition control panel
+}
+
+return
+
+previewstart:
+loop,5
+{
 	send_udp_text("127.0.0.1", remoteport%A_Index%, "___PREVIEW___")
 
 }
-
-
 return
+
 
 settarget:
 WinGet, windowlist, List, VCR SCHEDULER  
