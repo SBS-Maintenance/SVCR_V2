@@ -284,7 +284,7 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 			WinActivate, % title%A_index%
 			winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%
 		}
-		SetTimer, resetposition, -1
+		SetTimer,previewstart,-3000
 	}
 
 	if cmd_header = %cmdsettarget%
@@ -423,7 +423,13 @@ loop, 5
 
 }
 
+return
 
+previewstart:
+loop, 5
+{
+	send_udp_text("127.0.0.1", remoteport%A_Index%, "___PREVIEW___")
+}
 return
 
 settarget:
