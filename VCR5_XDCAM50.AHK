@@ -24,14 +24,12 @@ HIstory
 2021/12/24  - change audio format for XDCAM MOV  (mono 8 stream-> single stream 8 ch)
 */
 
-
-
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 #SingleInstance Ignore
 AutoTrim, on
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir% ; Ensures a consistent starting directory.
 menu, tray, icon, .\icon\bct-tape.ico
 ;#NoTrayIcon
 #Include Socket_mod.ahk
@@ -40,7 +38,6 @@ menu, tray, icon, .\icon\bct-tape.ico
 ahk_exe = ahk
 if A_IsCompiled
 	ahk_exe = exe
-
 
 pid_ffmpeg = -1
 pid_ffmpeg_proxy = -1
@@ -68,26 +65,25 @@ size_rec_old = -1
 
 channel_index := SubStr(A_ScriptName, 4, 1)			; extract 4th character from script file name
 
-IniRead, path_rec, svcr%channel_index%.ini, path, capture, s:\temp\     		; read rec path from svcr.ini, default : d:\capture\
-IniRead, path_dst, svcr%channel_index%.ini, path, target, g:\backup\  	;read backup target path
-IniRead, CHNAME, svcr%channel_index%.ini, name, name, VTR%channel_index%  ; read channel name
+IniRead, path_rec, svcr%channel_index%.ini, path, capture, s:\temp\ 		; read rec path from svcr.ini, default : d:\capture\
+IniRead, path_dst, svcr%channel_index%.ini, path, target, g:\backup\ 	;read backup target path
+IniRead, CHNAME, svcr%channel_index%.ini, name, name, VTR%channel_index% ; read channel name
 IniRead, url_preview, svcr%channel_index%.ini, url, preview, udp://232.100.1.101:60000
 IniRead, url_progress, svcr%channel_index%.ini, url, progress, udp://127.0.0.1:5556
 IniRead, audiomonl, svcr%channel_index%.ini, monitor, monitorleft, CH1
 IniRead, audiomonr, svcr%channel_index%.ini, monitor, monitorright, CH2
 IniRead, param_mpv_add, svcr%channel_index%.ini, general, preview_moreparameter, --no-audio
-IniRead, codec_default,  svcr%channel_index%.ini, general, codec_default, 1
+IniRead, codec_default, svcr%channel_index%.ini, general, codec_default, 1
 IniRead, time_cleanup, svcr%channel_index%.ini, cleanup, auto_cleanup, 02:01				; LOG, REC file Auto cleanup time
 IniRead, size_reserve, svcr%channel_index%.ini, cleanup, disk_usage, 100`%								; Capture Drive Reserve Capacity
 IniRead, autodelete_age, svcr%channel_index%.ini, cleanup, auto_delete_age, 0				; unit - days  (0 means do not autodelete)
 IniRead, flag_tcwrite, svcr%channel_index%.ini, general, timecode, 0				; write timecode flag
-IniRead, flag_ccg_ee,  svcr%channel_index%.ini, general, casparee, 0				; EE mode with casparCG
-
+IniRead, flag_ccg_ee, svcr%channel_index%.ini, general, casparee, 0				; EE mode with casparCG
 
 mv := new multiviewer
 mv.read_config("svcr" . channel_index . ".ini")
 
-finishday :=  20290221235959
+finishday := 20290221235959
 logfile = %A_WorkingDir%\log\sVCRLOG-%CHNAME%.log
 
 ; --------------- collect all log files name (with full path) --------------------------------------------
@@ -96,7 +92,7 @@ files_log.push(A_WorkingDir . "\log\transferlog.log")
 files_log.push(A_WorkingDir . "\log\schedulerlog.log")
 Loop, 5
 {
-	IniRead, temp, svcr%A_Index%.ini, name, name, VTR%A_Index%  ; read channel name
+	IniRead, temp, svcr%A_Index%.ini, name, name, VTR%A_Index% ; read channel name
 	temp = %A_WorkingDir%\log\sVCRLOG-%temp%.log
 	files_log.push(temp)																				; collect all log file names
 	temp = %A_WorkingDir%\log\transferlog_%A_index%.log
@@ -107,10 +103,9 @@ Loop, 5
 folders_capture := Object()
 Loop, 5
 {
-	IniRead, temp, svcr%A_Index%.ini, path, capture,   ; read capture folder
+	IniRead, temp, svcr%A_Index%.ini, path, capture, ; read capture folder
 	folders_capture.push(temp)
 }
-
 
 title := "SBS sVCR v2-" . CHNAME . " by sendust (20211224)"
 title_ee := "EE Video " . CHNAME
@@ -138,7 +133,6 @@ decklink_array[5] := """video=Blackmagic WDM Capture (6):audio=Blackmagic WDM Ca
 
 ;--------------------------------------------------------------------------------------------------------------------------------
 
-
 decklink_array_new := object()
 decklink_array_new[1] := """DeckLink 4K Extreme 12G"""
 decklink_array_new[2] := """DeckLink 8K Pro (2)"""
@@ -155,22 +149,21 @@ mpv_geometry[3] := " --geometry=20:310"
 mpv_geometry[4] := " --geometry=510:310"
 mpv_geometry[5] := " --geometry=510:590"
 
-
 gui, margin, 10, 10
-gui, add, text, xm ym  w255 hwndhtext1 gtext1 r1, Target : %path_dst%
+gui, add, text, xm ym w255 hwndhtext1 gtext1 r1, Target : %path_dst%
 gui, add, text, xp+260 yp w600 hwndhtext2 gtext2 r1 , Capture folder : %path_rec%
 gui, add, groupbox, xm ym+20 w680 h95 cBlue hwndhgroupbox, %CHNAME%-XDCAM50_MXF
 Gui, add, button, xm+20 ym+40 w50 h30 gpreview hwndhpreview, E.E.
-gui, add, button, xp+70 yp  w80 h30 gstart_rec  hwndhstart_rec, start rec             ; start recording button
-gui, add, button, xp+100 yp w80 h30 gstop_rec  hwndhstop_rec, stop rec  ; stop recording button
+gui, add, button, xp+70 yp w80 h30 gstart_rec hwndhstart_rec, start rec ; start recording button
+gui, add, button, xp+100 yp w80 h30 gstop_rec hwndhstop_rec, stop rec ; stop recording button
 Gui, add, DDL, xp+100 yp+5 w130 vcodec_choice hwndhcodec_choice choose%codec_default% gcodec_change, XDCAM50_MXF|XDCAM50_MOV|XDCAM_EX_MXF|PRORES_LT_MOV|PRORES_MOV|PRORES_HQ_MOV|MPEG2_TS|AUD_LOGGING|UHD_4K_MXF|UHD_4K_TS|UHD_4K_PRORES|STREAM|test
 gui, add, button, xp+150 yp-5 w80 h30 gsel_target hwndhsel_target, Sel Target
-gui, add, edit, xm+20 yp+40  w350 h25 vfile_userinput, %CHNAME%
-gui, add, text, xp+360 yp+5  w200 h15 hwndhrectimedisplay,  Time              ; display record time
+gui, add, edit, xm+20 yp+40 w350 h25 vfile_userinput, %CHNAME%
+gui, add, text, xp+360 yp+5 w200 h15 hwndhrectimedisplay, Time ; display record time
 
-gui, add, checkbox,xm+580 ym+40 vchk_transfer hwndhtransfer, TRASFER                               ; auto transfer, checkbox
-gui, add, Checkbox, xp yp+20  vchk_proxy hwndhproxy, PROXY                          ; Enable or disable Proxy clip generation
-gui, add, Checkbox, xp yp+20  vchk_split hwndhsplit, SPLIT
+gui, add, checkbox,xm+580 ym+40 vchk_transfer hwndhtransfer, TRASFER ; auto transfer, checkbox
+gui, add, Checkbox, xp yp+20 vchk_proxy hwndhproxy, PROXY ; Enable or disable Proxy clip generation
+gui, add, Checkbox, xp yp+20 vchk_split hwndhsplit, SPLIT
 
 gui, add, picture, x0 y0 hwndhred_bar, .\icon\redbar_400.png
 gui, add, picture, x400 y0 hwndhgreen_bar, .\icon\greenbar_300.png
@@ -185,10 +178,8 @@ GuiControl, font, %hrectimedisplay%
 GuiControl, hide, %hred_bar%
 GuiControl, hide, %hgreen_bar%
 
-
 gui_stop:= [hstart_rec, hcodec_choice, hsel_target, htransfer, hproxy, hsplit]			; enabled gui handle at each situation
 gui_rec := [hstop_rec]																										; enabled gui handle at each situation
-
 
 if flag_sbsdvr
 {
@@ -202,7 +193,6 @@ if flag_sbsdvr
 	updatelog("SBB DVR Mode Started")
 }
 
-
 encoder_param := Object()
 extension := Object()
 progress_var := object()				; variable for ffmpeg progress position, time (from UDP stream)
@@ -210,11 +200,12 @@ progress_udp := Object()
 split_param := Object()
 remote_control := Object()						; Remote command list object
 
-
 remote_control.cmd["start_rec"] := "__START_REC__"		; 13 character
 remote_control.cmd["stop_rec"] := "__STOP_REC___"
 remote_control.cmd["preview"] := "___PREVIEW___"
 remote_control.cmd["settarget"]:="_SETTARGET___"
+remote_control.cmd["transferc"]:="___TRANSFERC_"
+remote_control.cmd["transferu"]:="___TRANSFERU_"
 remote_control.handle["start_rec"] := hstart_rec
 remote_control.handle["stop_rec"] := hstop_rec
 remote_control.handle["preview"] := hpreview
@@ -222,7 +213,7 @@ remote_control.handle["settarget"]:=hsettarget
 
 printobjectlist(cmdlist.handle)
 
-progress_udp := new  SocketUDP()
+progress_udp := new SocketUDP()
 progress_udp.bind(url_to_address_array(url_progress))
 progress_udp.onRecv := Func("OnUDPRecv")
 
@@ -248,7 +239,6 @@ encoder_array["UHD_4K_PRORES"] := binary_ffmpeg_uhd
 encoder_array["STREAM"] := binary_ffmpeg
 encoder_array["test"] := binary_ffmpeg
 
-
 extension["XDCAM50_MXF"] := "mxf"
 extension["XDCAM50_MOV"] := "mov"
 extension["XDCAM_EX_MXF"] := "mxf"
@@ -263,33 +253,29 @@ extension["UHD_4K_PRORES"] := "mov"
 extension["STREAM"] := "ts"
 extension["test"] := "mov"
 
-
-
 ;-pix_fmt yuv422p10le -r ntsc -c:v prores -profile:v 1 -b:v 102000k -maxrate 102000k
 ; Prores Profile : 0 Proxy,   1 LT,   2 Standard,   3 HQ,   4 4444,   5 4444 XQ  (with  c:v prores_ks)
 
 ;parameter - v1
 ;  ffmpeg_string =  ffmpeg -f dshow -r %framerate% -video_size 1920x1080 -rtbufsize 2100M -framerate %framerate% -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels %audio_rec_channel% -i "%inputdevicestring%" -pix_fmt %mycspace% -c:v mpeg2video -profile:v 0 -level:v 2 -b:v %mybitrate% -maxrate %mybitrate% -minrate %mybitrate% -bufsize 20000k -flags +ildct+ilme -field_order tt -top 1 -g %gopsize% -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -filter_complex "[0:0]setfield=tff;[0:1]aresample=async=1000[are];[are]channelsplit=channel_layout=%alayout%" -acodec pcm_s24le -y
 
-param_decklinkinput_yuv422p := "  -y -f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i "
-param_decklinkinput_v210 := "  -y -f dshow  -r 29.97 -vcodec v210 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -sample_rate 48000 -sample_size 16 -channels 8 -i "
-param_streaminput := " -y -re -i " .  get_stream_address("svcr" . channel_index . ".ini")
+param_decklinkinput_yuv422p := " -y -f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i "
+param_decklinkinput_v210 := " -y -f dshow -r 29.97 -vcodec v210 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -sample_rate 48000 -sample_size 16 -channels 8 -i "
+param_streaminput := " -y -re -i " . get_stream_address("svcr" . channel_index . ".ini")
 
 ;param_decklinkinput_yuv422p := " -y  -f dshow  -framerate 29.97 -video_size 1920x1080 -rtbufsize 2100M -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i "		; new 2020/4/9
 ;param_decklinkinput_v210 := " -y -f dshow  -framerate 29.97  -vcodec v210  -video_size 1920x1080 -rtbufsize 2100M -top 1 -sample_rate 48000 -sample_size 16 -channels 8 -i "				; new 2020/4/9	without -r 29.97 , encoding fail sometimes.
 
-param_decklinkinput_yuv422p_new := " -y  -f decklink -channels 8 -audio_depth 32 -queue_size 3000000000 -timestamp_align 0.1 -draw_bars 0 -format_code Hi59 -raw_format uyvy422 -i  "
-param_decklinkinput_v210_new := " -y  -f decklink -channels 8 -audio_depth 32 -queue_size 3000000000 -timestamp_align 0.1 -draw_bars 0 -format_code Hi59 -raw_format yuv422p10 -i  "
+param_decklinkinput_yuv422p_new := " -y -f decklink -channels 8 -audio_depth 32 -queue_size 3000000000 -timestamp_align 0.1 -draw_bars 0 -format_code Hi59 -raw_format uyvy422 -i "
+param_decklinkinput_v210_new := " -y -f decklink -channels 8 -audio_depth 32 -queue_size 3000000000 -timestamp_align 0.1 -draw_bars 0 -format_code Hi59 -raw_format yuv422p10 -i "
 
-param_decklinkinput_yuv422p_uhd:= " -y  -f decklink -channels 8 -audio_depth 32 -queue_size 4000000000 -timestamp_align 0.2  -draw_bars 0 -format_code 4k59 -raw_format uyvy422 -i  "					; queue size changed 8G -> 4G 2020/6/9
-param_decklinkinput_v210_uhd:= " -y  -f decklink -channels 8 -audio_depth 32 -queue_size 4000000000 -timestamp_align 0.2  -draw_bars 0  -format_code 4k59 -raw_format uyvy422 -i  "
-param_decklinkinput_yuv422p10_uhd:= " -y  -f decklink -channels 8 -audio_depth 32 -queue_size 8000000000 -timestamp_align 0.2  -draw_bars 0  -format_code 4k59 -raw_format yuv422p10 -i  "		; new, added 2020/3/31
+param_decklinkinput_yuv422p_uhd:= " -y -f decklink -channels 8 -audio_depth 32 -queue_size 4000000000 -timestamp_align 0.2 -draw_bars 0 -format_code 4k59 -raw_format uyvy422 -i "					; queue size changed 8G -> 4G 2020/6/9
+param_decklinkinput_v210_uhd:= " -y -f decklink -channels 8 -audio_depth 32 -queue_size 4000000000 -timestamp_align 0.2 -draw_bars 0 -format_code 4k59 -raw_format uyvy422 -i "
+param_decklinkinput_yuv422p10_uhd:= " -y -f decklink -channels 8 -audio_depth 32 -queue_size 8000000000 -timestamp_align 0.2 -draw_bars 0 -format_code 4k59 -raw_format yuv422p10 -i "		; new, added 2020/3/31
 
-
-param_record_filtercomplex := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k -minrate 2000k  -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts "
-param_record_filtercomplex_asum := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k -minrate 2000k  -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts "
-param_record_filtercomplex_ts := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=4[ain1][ain2][ain3][ain4];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[aout1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[aout2];[ain3]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain4]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2]  -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k  -minrate 2000k -g 10 -bf 0 -c:a ac3 -ac 4  -f mpegts "
-
+param_record_filtercomplex := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k -minrate 2000k -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts "
+param_record_filtercomplex_asum := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k -minrate 2000k -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts "
+param_record_filtercomplex_ts := " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=4[ain1][ain2][ain3][ain4];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[aout1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[aout2];[ain3]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain4]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 2000k -minrate 2000k -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts "
 
 if !flag_dshowinput				; set input parameter as new input parameter
 {
@@ -299,40 +285,36 @@ if !flag_dshowinput				; set input parameter as new input parameter
 		decklink_array[A_Index] := decklink_array_new[A_Index]
 }
 
-
 ;encoder_param["XDCAM50_MXF"] := " -y -f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i " . decklink_array[channel_index] . " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/4:ih/2[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 4000k -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts " . duration_max  . url_preview . " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p  -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 20000k -flags +ildct+ilme+cgop -top 1 -g 15 -bf 2 -sc_threshold 1000000000 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le " . duration_max		; 2019/6/3 Last ver
 
-encoder_param["XDCAM50_MXF"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex . duration_max  . url_preview . " -ss 1 -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p  -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 35000k  -trellis 0  -mpv_flags strict_gop  -flags +ildct+ilme -top 1 -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le " . duration_max		; 2019/6/12 Last ver
+encoder_param["XDCAM50_MXF"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex . duration_max . url_preview . " -ss 1 -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 35000k -trellis 0 -mpv_flags strict_gop -flags +ildct+ilme -top 1 -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le " . duration_max		; 2019/6/12 Last ver
 ;encoder_param["XDCAM50_MOV"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex . duration_max  . url_preview .  " -ss 1  -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p  -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 35000k  -trellis 0  -mpv_flags strict_gop  -flags +ildct+ilme  -top 1 -g 15 -bf 2  -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le -vtag xd5b" . duration_max 				; 2019/6/12 Last ver
-encoder_param["XDCAM50_MOV"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max  . url_preview .  " -ss 1  -map [vo1] -map [asumout] -pix_fmt yuv422p  -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 35000k  -trellis 0  -mpv_flags strict_gop  -flags +ildct+ilme  -top 1 -g 15 -bf 2  -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le -vtag xd5b" . duration_max 				; 2021/1/26   Modified for Premier
-encoder_param["XDCAM_EX_MXF"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex . duration_max  . url_preview .  " -ss 1  -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv420p -b:v 35000k -maxrate 35000k -minrate 35000k -bufsize 35000k  -trellis 0  -mpv_flags strict_gop  -flags +ildct+ilme -top 1 -g 15 -bf 2  -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s16le -vtag xdvb" . duration_max 			; 2019/6/12 Last ver
-encoder_param["PRORES_LT_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max  . url_preview .  " -ss 1  -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 1 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; 2019/6/12 Last ver
-encoder_param["PRORES_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max  . url_preview .  " -ss 1  -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 2 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; added 2019/6/7
-encoder_param["PRORES_HQ_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max  . url_preview .  "  -ss 1 -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 3 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; added 2019/6/7
+encoder_param["XDCAM50_MOV"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max . url_preview . " -ss 1 -map [vo1] -map [asumout] -pix_fmt yuv422p -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 35000k -trellis 0 -mpv_flags strict_gop -flags +ildct+ilme -top 1 -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le -vtag xd5b" . duration_max 				; 2021/1/26   Modified for Premier
+encoder_param["XDCAM_EX_MXF"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex . duration_max . url_preview . " -ss 1 -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv420p -b:v 35000k -maxrate 35000k -minrate 35000k -bufsize 35000k -trellis 0 -mpv_flags strict_gop -flags +ildct+ilme -top 1 -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s16le -vtag xdvb" . duration_max 			; 2019/6/12 Last ver
+encoder_param["PRORES_LT_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max . url_preview . " -ss 1 -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 1 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; 2019/6/12 Last ver
+encoder_param["PRORES_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max . url_preview . " -ss 1 -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 2 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; added 2019/6/7
+encoder_param["PRORES_HQ_MOV"] := param_decklinkinput_v210 . decklink_array[channel_index] . param_record_filtercomplex_asum . duration_max . url_preview . " -ss 1 -map [vo1] -map [asumout] -pix_fmt yuv422p10le -c:v prores -profile:v 3 -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -acodec pcm_s16le " . duration_max 				; added 2019/6/7
 ;encoder_param["MPEG2_TS"] := " -y -f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i " . decklink_array[channel_index] . " -filter_complex ""[0:v]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]field=0[vfield];[vfield]scale=iw/2:ih[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2]  -pix_fmt yuv420p -c:v mpeg2video -b:v 8000k -g 10 -c:a ac3 -ac 4  -f mpegts " . duration_max  . url_preview .  " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8]  -pix_fmt yuv420p -flags +ildct+ilme+cgop -sc_threshold 1000000000 -b:v 25000k -g 15 -bf 2 -qmax 4 -c:v mpeg2video -c:a mp2 -ac 1 " . duration_max 				; added 2019/6/7 (Edius cannot handle  8 track mp2 stream)
-encoder_param["MPEG2_TS"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex_ts . duration_max  . url_preview . " -map [vo1] -map [aout1] -map [aout2]   -pix_fmt yuv420p -flags +ildct+ilme+cgop -sc_threshold 1000000000 -b:v 19000k -g 15 -bf 2  -trellis 0  -c:v mpeg2video -c:a ac3 -ac 4 " . duration_max 				; added 2019/6/12, Edius friendly autio parameter
-
-
+encoder_param["MPEG2_TS"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . param_record_filtercomplex_ts . duration_max . url_preview . " -map [vo1] -map [aout1] -map [aout2] -pix_fmt yuv420p -flags +ildct+ilme+cgop -sc_threshold 1000000000 -b:v 19000k -g 15 -bf 2 -trellis 0 -c:v mpeg2video -c:a ac3 -ac 4 " . duration_max 				; added 2019/6/12, Edius friendly autio parameter
 
 proxy_param := " -i " . url_preview . " -c copy -y "
 
 ; prores Example
 ; ffmpeg -f dshow -vcodec v210 -r 29.97 -video_size 1920x1080 -rtbufsize 1400M -framerate 29.97 -top 1 -sample_rate 48000 -sample_size 16 -channels %audio_rec_channel% -i "%inputdevicestring%" -pix_fmt yuv422p -c:v prores %prores_profile% -flags +ildct+ilme -field_order tt -top 1 -color_primaries 1 -color_trc 1 -colorspace 1 -filter_complex "[0:0]setfield=tff;channelsplit=channel_layout=%alayout%" -drop_frame_timecode 1 -acodec pcm_s16le -y
 
-encoder_param["AUD_LOGGING"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vs];[vs]setdar=1.7778[vdar];[0:a]aresample=async=1000[are];[are]asplit=6[a1][a2][a3][a4][a5][a6];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apan1];[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apan2];[a3]showspectrum=mode=separate:saturation=5:gain=3:size=1280x720:fps=29.97:slide=scroll:legend=1:win_func=2[sptum];[a4]showvolume=r=29.97[vvol];[vdar][vvol]overlay[vovy1];[sptum][vovy1]overlay=x=900:y=50[vout];[vout]split[vrec][vrec2];[vrec2]scale=480x270[vpvw];[a5]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[arec1];[a6]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[arec2]"" -map [vpvw] -pix_fmt yuv420p   -c:v mpeg2video -b:v 4000k  -minrate 4000k -maxrate 4000k -bufsize 2000k  -g 10 -bf 0 -map [apan1] -map [apan2] -c:a ac3 -ac 4  -f mpegts " .  url_preview  .  duration_max . " -map [vrec] -map [arec1] -map [arec2] -c:a ac3 -ac 4 -c:v mpeg2video -b:v 17000k " . duration_max
+encoder_param["AUD_LOGGING"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vs];[vs]setdar=1.7778[vdar];[0:a]aresample=async=1000[are];[are]asplit=6[a1][a2][a3][a4][a5][a6];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apan1];[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apan2];[a3]showspectrum=mode=separate:saturation=5:gain=3:size=1280x720:fps=29.97:slide=scroll:legend=1:win_func=2[sptum];[a4]showvolume=r=29.97[vvol];[vdar][vvol]overlay[vovy1];[sptum][vovy1]overlay=x=900:y=50[vout];[vout]split[vrec][vrec2];[vrec2]scale=480x270[vpvw];[a5]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[arec1];[a6]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[arec2]"" -map [vpvw] -pix_fmt yuv420p -c:v mpeg2video -b:v 4000k -minrate 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -map [apan1] -map [apan2] -c:a ac3 -ac 4 -f mpegts " . url_preview . duration_max . " -map [vrec] -map [arec1] -map [arec2] -c:a ac3 -ac 4 -c:v mpeg2video -b:v 17000k " . duration_max
 ;encoder_param["test"] := "-y -i rtmp://210.216.76.120/live/sbsonair  -c copy -f mpegts  -bsf:v h264_mp4toannexb " . duration_max  . url_preview . " -c copy" . duration_max
-encoder_param["test"] := "-f lavfi -re -i testsrc2=size=1920x1080:rate=29.97 -f lavfi -re -i sine=frequency=1000:sample_rate=48000  -filter_complex ""[0]format=pix_fmts=yuv422p[vtest];[1][1][1][1][1][1][1][1]amerge=inputs=8[atest];[vtest]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]scale=iw/4:ih/4:flags=fast_bilinear[vo2];[atest]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 4000k -minrate 4000k  -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts " . duration_max  . url_preview .  " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p  -profile:v 0 -level:v 2  -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 20000k -flags +ildct+ilme -top 1  -mpv_flags strict_gop  -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le -vtag xd5b" . duration_max
-encoder_param["UHD_4K_MXF"] :=param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] . "  -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]split[vo1][vin2];[vin2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video -g 5 -b:v 4000k -c:a ac3 -ac 4 -f mpegts "  . duration_max  . url_preview . " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -c:v h264_nvenc -preset:v fast -rc vbr -b:v 100000000 -bf 0 -c:a pcm_s24le -signal_standard 6 " . duration_max
-encoder_param["UHD_4K_TS"] := param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] .  "  -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]split[vo1][vin2];[vin2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=4[ain1][ain2][ain3][ain4];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[aout1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[aout2];[ain3]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain4]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video -bf 0 -g 5 -b:v 4000k -c:a ac3 -ac 4 -f mpegts "  . duration_max  . url_preview . " -map [vo1] -map [aout1] -map [aout2] -c:v h264_nvenc -preset:v fast  -rc vbr -b:v 70000000 -bf 0 -minrate 1000k -c:a aac -ac 4  " . duration_max
+encoder_param["test"] := "-f lavfi -re -i testsrc2=size=1920x1080:rate=29.97 -f lavfi -re -i sine=frequency=1000:sample_rate=48000 -filter_complex ""[0]format=pix_fmts=yuv422p[vtest];[1][1][1][1][1][1][1][1]amerge=inputs=8[atest];[vtest]split[vin1][vin2];[vin1]setfield=tff[vo1];[vin2]scale=iw/4:ih/4:flags=fast_bilinear[vo2];[atest]aresample=async=1000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -pix_fmt yuv420p -c:v mpeg2video -b:v 4000k -minrate 4000k -g 10 -bf 0 -c:a ac3 -ac 4 -f mpegts " . duration_max . url_preview . " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -pix_fmt yuv422p -profile:v 0 -level:v 2 -b:v 50000k -maxrate 50000k -minrate 50000k -bufsize 20000k -flags +ildct+ilme -top 1 -mpv_flags strict_gop -g 15 -bf 2 -color_primaries 1 -color_trc 1 -colorspace 1 -c:v mpeg2video -acodec pcm_s24le -vtag xd5b" . duration_max
+encoder_param["UHD_4K_MXF"] :=param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]split[vo1][vin2];[vin2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]channelsplit=channel_layout=7.1[ao1][ao2][ao3][ao4][ao5][ao6][ao7][ao8];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video -g 5 -b:v 4000k -c:a ac3 -ac 4 -f mpegts " . duration_max . url_preview . " -map [vo1] -map [ao1] -map [ao2] -map [ao3] -map [ao4] -map [ao5] -map [ao6] -map [ao7] -map [ao8] -c:v h264_nvenc -preset:v fast -rc vbr -b:v 100000000 -bf 0 -c:a pcm_s24le -signal_standard 6 " . duration_max
+encoder_param["UHD_4K_TS"] := param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]split[vo1][vin2];[vin2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo2];[0:a]aresample=async=1000[are];[are]asplit=outputs=4[ain1][ain2][ain3][ain4];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[aout1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[aout2];[ain3]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain4]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video -bf 0 -g 5 -b:v 4000k -c:a ac3 -ac 4 -f mpegts " . duration_max . url_preview . " -map [vo1] -map [aout1] -map [aout2] -c:v h264_nvenc -preset:v fast -rc vbr -b:v 70000000 -bf 0 -minrate 1000k -c:a aac -ac 4 " . duration_max
 ;encoder_param["UHD_4K_PRORES"] := param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] .  " -filter_complex ""[0:v]split[v1][v2];[v2]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5  -c:a ac3 -ac 4 -f mpegts "  . duration_max  . url_preview . " -map [v1] -map [asumout] -c:v prores -profile:v 1 -c:a pcm_s24le   "  . duration_max 			; new, added 2020/3/31
-encoder_param["UHD_4K_PRORES"] := param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] .  " -filter_complex ""[0:v]split[v1][v2];[v2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vsize];[vsize]format=pix_fmts=yuv420p[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5  -c:a ac3 -ac 4 -f mpegts "  . duration_max  . url_preview . " -map [v1] -map [asumout] -c:v prores -profile:v 1 -c:a pcm_s24le   "  . duration_max 			; change filter order  2021/5/8
+encoder_param["UHD_4K_PRORES"] := param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]split[v1][v2];[v2]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vsize];[vsize]format=pix_fmts=yuv420p[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain3]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4 -f mpegts " . duration_max . url_preview . " -map [v1] -map [asumout] -c:v prores -profile:v 1 -c:a pcm_s24le " . duration_max 			; change filter order  2021/5/8
 
-encoder_param["STREAM"] :=  param_streaminput  . " -filter_complex ""[0:v]split[v1][v2];[v2]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=480:270:flags=fast_bilinear[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=stereo|c0=c0|c1=c1[apw1];[ain3]pan=stereo|c0=c0|c1=c1[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video  -b:v 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a ac3 -ac 2  -f mpegts "  . duration_max  . url_preview . " -map [v1] -map [asumout] -c:v mpeg2video -q:v 2 -g 15  -c:a libmp3lame -ab 128k   "  . duration_max 			; new, added 2020/5/8
-
+encoder_param["STREAM"] := param_streaminput . " -filter_complex ""[0:v]split[v1][v2];[v2]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=480:270:flags=fast_bilinear[vo2];[0:a]aresample=48000[are];[are]asplit=outputs=3[ain1][ain2][ain3];[ain1]anull[asumout];[ain2]pan=stereo|c0=c0|c1=c1[apw1];[ain3]pan=stereo|c0=c0|c1=c1[apw2]"" -map [vo2] -map [apw1] -map [apw2] -c:v mpeg2video -b:v 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a ac3 -ac 2 -f mpegts " . duration_max . url_preview . " -map [v1] -map [asumout] -c:v mpeg2video -q:v 2 -g 15 -c:a libmp3lame -ab 128k " . duration_max 			; new, added 2020/5/8
 
 ; -reset_timestamps 1 introduce random 'missing frame', very rare...rare.... 2019/5/26
 
-split_param["XDCAM50_MXF"] := "  -flags +ildct+ilme+cgop  -sc_threshold 1000000000 -f segment -fflags +genpts -increment_tc 1 -reset_timestamps 1 -segment_times 3,3603,7203,10803,14403,18003,21603,25203,28803,32403,36003,39603,43203,46803,50403,54003,57603,61203,64803,68403,72003,75603,79203,82803,86403"	; 1 hour split
+split_param["XDCAM50_MXF"] := " -flags +ildct+ilme+cgop -sc_threshold 1000000000 -f segment -fflags +genpts -increment_tc 1 -reset_timestamps 1 -segment_times 3,3603,7203,10803,14403,18003,21603,25203,28803,32403,36003,39603,43203,46803,50403,54003,57603,61203,64803,68403,72003,75603,79203,82803,86403"	; 1 hour split
 ;split_param["XDCAM50_MXF"] := " -f segment -fflags +genpts -increment_tc true -reset_timestamps 1 -segment_times 3,63,123,183,243,303,363,423,483,543,603,663,723,783,843,903,963,1023,1083,1143,1203,1263,1323,1383,1443,1503,1563"  ; 1 min split	(test purpose)
 ;split_param["XDCAM50_MXF"] := " -f segment -fflags +genpts -increment_tc true -reset_timestamps 1 -segment_time 300"  ; periodic  split - simple mode (test purpose)
 split_param["XDCAM50_MOV"] := split_param["XDCAM50_MXF"]
@@ -340,14 +322,13 @@ split_param["XDCAM_EX_MXF"] := split_param["XDCAM50_MXF"]
 split_param["PRORES_LT_MOV"] := split_param["XDCAM50_MXF"]
 split_param["PRORES_MOV"] := split_param["XDCAM50_MXF"]
 split_param["PRORES_HQ_MOV"] := split_param["XDCAM50_MXF"]
-split_param["MPEG2_TS"] := "  -flags +ildct+ilme+cgop  -sc_threshold 1000000000   -f segment -fflags +genpts -reset_timestamps 1 -segment_time 3600"
+split_param["MPEG2_TS"] := " -flags +ildct+ilme+cgop -sc_threshold 1000000000 -f segment -fflags +genpts -reset_timestamps 1 -segment_time 3600"
 split_param["AUD_LOGGING"] := split_param["MPEG2_TS"]
-split_param["UHD_4K_MXF"] := " -f segment  -increment_tc 1 -reset_timestamps 1  -flags -global_header  -segment_times 3,3603,7203,10803,14403,18003,21603,25203,28803,32403,36003,39603,43203,46803,50403,54003,57603,61203,64803,68403,72003,75603,79203,82803,86403 "
+split_param["UHD_4K_MXF"] := " -f segment -increment_tc 1 -reset_timestamps 1 -flags -global_header -segment_times 3,3603,7203,10803,14403,18003,21603,25203,28803,32403,36003,39603,43203,46803,50403,54003,57603,61203,64803,68403,72003,75603,79203,82803,86403 "
 split_param["UHD_4K_TS"] := split_param["UHD_4K_MXF"]
 split_param["UHD_4K_PRORES"] := split_param["UHD_4K_MXF"]			; new added 2020/3/31
 split_param["test"] := " -f segment -fflags +genpts -segment_times 3,13,23,33,43,53,63,73,83,93,103,113,123,133,143,153,163,173,183,193,203,213,223,233,243,253,263,273,283,293,303,313,323,333,343"
-split_param["STREAM"] := "  -flags +cgop  -sc_threshold 1000000000    -f segment -fflags +genpts -reset_timestamps 1 -segment_time 3600"				; new add 2020/5/8
-
+split_param["STREAM"] := " -flags +cgop -sc_threshold 1000000000 -f segment -fflags +genpts -reset_timestamps 1 -segment_time 3600"				; new add 2020/5/8
 
 ; about split, first segment ---------------
 ;  mxf : EDIUS, FCP NG
@@ -363,33 +344,31 @@ split_param["STREAM"] := "  -flags +cgop  -sc_threshold 1000000000    -f segment
 ;preview_param := "-f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i " . decklink_array[channel_index] . " -filter_complex ""[0:v]field=0[vfield];[vfield]scale=iw/2:ih;[0:a]channelsplit=channel_layout=7.1"" -pix_fmt yuv420p  -c:v mpeg2video -b:v 8000k -g 15 -c:a mp2 -ac 1  -f mpegts " . url_preview				; muti stream, single channel			(Final version 2019/5/30)
 ;preview_param := "-f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i " . decklink_array[channel_index] . " -filter_complex ""[0:v]field=0[vfield];[vfield]scale=iw/2:ih;[0:a]asplit[a1][a2];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3;[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7"" -pix_fmt yuv420p  -c:v mpeg2video -b:v 8000k -g 15 -c:a aac -ac 4  -f mpegts " . url_preview				; muti stream, multi channel			(Final version 2019/6/3. 960x540 resolution)
 
-
 preview_param_list := Object()
-preview_param_list["XDCAM50_MXF"] :=  param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear;[0:a]asplit[a1][a2];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3;[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7"" -pix_fmt yuv420p  -c:v mpeg2video -b:v 4000k -minrate 4000k  -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4  -f mpegts " . url_preview				; muti stream, multi channel			(Final version 2019/6/12.480x270 resolution)
+preview_param_list["XDCAM50_MXF"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear;[0:a]asplit[a1][a2];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3;[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7"" -pix_fmt yuv420p -c:v mpeg2video -b:v 4000k -minrate 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4 -f mpegts " . url_preview				; muti stream, multi channel			(Final version 2019/6/12.480x270 resolution)
 preview_param_list["XDCAM50_MOV"] := preview_param_list["XDCAM50_MXF"]
 preview_param_list["XDCAM_EX_MXF"] := preview_param_list["XDCAM50_MXF"]
 preview_param_list["PRORES_LT_MOV"] := preview_param_list["XDCAM50_MXF"]
 preview_param_list["PRORES_MOV"] := preview_param_list["XDCAM50_MXF"]
 preview_param_list["PRORES_HQ_MOV"] := preview_param_list["XDCAM50_MXF"]
 preview_param_list["MPEG2_TS"] := preview_param_list["XDCAM50_MXF"]
-preview_param_list["AUD_LOGGING"] :=  param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vs];[vs]setdar=1.7778[vdar];[0:a]aresample=async=1000[are];[are]asplit=4[a1][a2][a3][a4];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apan1];[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apan2];[a3]showspectrum=mode=separate:saturation=5:gain=3:size=1280x720:fps=29.97:slide=scroll:legend=1:win_func=2[sptum];[a4]showvolume=r=29.97[vvol];[vdar][vvol]overlay[vovy1];[sptum][vovy1]overlay=x=900:y=50[vout];[vout]scale=1280x720[vpvw]"" -map [vpvw] -pix_fmt yuv420p   -c:v mpeg2video -b:v 8000k  -minrate 8000k -maxrate 8000k -bufsize 14000k  -g 10 -bf 0 -map [apan1] -map [apan2] -c:a ac3 -ac 4  -f mpegts " .  url_preview
+preview_param_list["AUD_LOGGING"] := param_decklinkinput_yuv422p . decklink_array[channel_index] . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]field=0[vfield];[vfield]scale=iw/4:ih/2:flags=fast_bilinear[vs];[vs]setdar=1.7778[vdar];[0:a]aresample=async=1000[are];[are]asplit=4[a1][a2][a3][a4];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apan1];[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apan2];[a3]showspectrum=mode=separate:saturation=5:gain=3:size=1280x720:fps=29.97:slide=scroll:legend=1:win_func=2[sptum];[a4]showvolume=r=29.97[vvol];[vdar][vvol]overlay[vovy1];[sptum][vovy1]overlay=x=900:y=50[vout];[vout]scale=1280x720[vpvw]"" -map [vpvw] -pix_fmt yuv420p -c:v mpeg2video -b:v 8000k -minrate 8000k -maxrate 8000k -bufsize 14000k -g 10 -bf 0 -map [apan1] -map [apan2] -c:a ac3 -ac 4 -f mpegts " . url_preview
 
-preview_param_list["test"] := "-f lavfi -re -i testsrc2=size=480x270:rate=29.97 -f lavfi -re -i sine=frequency=1000:sample_rate=48000  -filter_complex ""[0]format=pix_fmts=yuv420p[vtest];[1][1][1][1]amerge=inputs=4[atest1];[1][1][1][1]amerge=inputs=4[atest2]"" -map [vtest] -map [atest1] -map [atest2] -c:v mpeg2video -b:v 4000k -minrate 4000k  -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4  -f mpegts " . url_preview							; test signal generator for EE preview, 2019/9/6
+preview_param_list["test"] := "-f lavfi -re -i testsrc2=size=480x270:rate=29.97 -f lavfi -re -i sine=frequency=1000:sample_rate=48000 -filter_complex ""[0]format=pix_fmts=yuv420p[vtest];[1][1][1][1]amerge=inputs=4[atest1];[1][1][1][1]amerge=inputs=4[atest2]"" -map [vtest] -map [atest1] -map [atest2] -c:v mpeg2video -b:v 4000k -minrate 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4 -f mpegts " . url_preview							; test signal generator for EE preview, 2019/9/6
 
-preview_param_list["UHD_4K_MXF"]:= param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] .  "  -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]""  -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4 -f mpegts " . url_preview
+preview_param_list["UHD_4K_MXF"]:= param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4 -f mpegts " . url_preview
 
-preview_param_list["UHD_4K_TS"]:= param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] .  "  -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]""  -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4  -f mpegts " . url_preview
+preview_param_list["UHD_4K_TS"]:= param_decklinkinput_yuv422p_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4 -f mpegts " . url_preview
 
 ;preview_param_list["UHD_4K_PRORES"]:= param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] .  "  -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]""  -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4  -f mpegts " . url_preview			; new added 2020/3/31
-preview_param_list["UHD_4K_PRORES"]:= param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] .  "  -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]""  -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4  -f mpegts " . url_preview			; new added 2020/3/31
+preview_param_list["UHD_4K_PRORES"]:= param_decklinkinput_yuv422p10_uhd . decklink_array_new[channel_index] . " -filter_complex ""[0:v]fps=29.97[vfps];[vfps]scale=iw/8:ih/8:flags=fast_bilinear[size];[size]format=pix_fmts=yuv420p[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3[apw1];[ain2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7[apw2]"" -map [vo1] -map [apw1] -map [apw2] -r 29.97 -c:v h264_nvenc -preset:v ll -b:v 4000k -g 5 -c:a ac3 -ac 4 -f mpegts " . url_preview			; new added 2020/3/31
 
-preview_param_list["STREAM"]:= param_streaminput  .  "  -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=480:270:flags=fast_bilinear[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=stereo|c0=c0|c1=c1[apw1];[ain2]pan=stereo|c0=c0|c1=c1[apw2]""  -map [vo1] -map [apw1] -map [apw2]  -c:v mpeg2video  -b:v 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a ac3 -ac 2  -f mpegts " . url_preview			; new added 2020/5/8
+preview_param_list["STREAM"]:= param_streaminput . " -filter_complex ""[0:v]format=pix_fmts=yuv420p[vpix];[vpix]fps=29.97[vfps];[vfps]scale=480:270:flags=fast_bilinear[vo1];[0:a]asplit=outputs=2[ain1][ain2];[ain1]pan=stereo|c0=c0|c1=c1[apw1];[ain2]pan=stereo|c0=c0|c1=c1[apw2]"" -map [vo1] -map [apw1] -map [apw2] -c:v mpeg2video -b:v 4000k -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a ac3 -ac 2 -f mpegts " . url_preview			; new added 2020/5/8
 
 /*
 preview_param_decklink := "-f dshow -r 29.97 -video_size 1920x1080 -rtbufsize 2100M -framerate 29.97 -top 1 -pixel_format uyvy422 -sample_rate 48000 -sample_size 16 -channels 8 -i " . decklink_array[channel_index] . " -filter_complex ""[0:v]field=0[vfield];[vfield]scale=iw/4:ih/2;[0:a]asplit[a1][a2];[a1]pan=4.0|c0=c0|c1=c1|c2=c2|c3=c3;[a2]pan=4.0|c0=c4|c1=c5|c2=c6|c3=c7"" -pix_fmt yuv420p  -c:v mpeg2video -b:v 4000k -minrate 4000k  -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4  -f mpegts " . url_preview				; muti stream, multi channel			(Final version 2019/6/12.480x270 resolution)
 preview_param_test :=  "-f lavfi -re -i testsrc2=size=480x270:rate=29.97 -f lavfi -re -i sine=frequency=1000:sample_rate=48000  -filter_complex ""[0]format=pix_fmts=yuv420p[vtest];[1][1][1][1]amerge=inputs=4[atest1];[1][1][1][1]amerge=inputs=4[atest2]"" -map [vtest] -map [atest1] -map [atest2] -c:v mpeg2video -b:v 4000k -minrate 4000k  -maxrate 4000k -bufsize 2000k -g 10 -bf 0 -c:a aac -ac 4  -f mpegts " . url_preview							; test signal generator for EE preview, 2019/9/6
 */
-
 
 ;----------------------------------------------------  Test parameter ----------------------------------------------------
 ;preview_param := "-i rtmp://210.216.76.120/live/sbsonair  -c copy -f mpegts -bsf:v h264_mp4toannexb " . url_preview			; for test
@@ -406,7 +385,7 @@ mpv --lavfi-complex=[aid1]showvolume=r=29.97[vvolume1];[aid2]showvolume=r=29.97[
 
 ;preview_param_mpv := "--lavfi-complex=[aid1]asplit[as1][as2];[as1]showvolume=r=29.97[vvolume];[vid1]format=pix_fmts=yuv420p[vfmt];[vfmt][vvolume]overlay=x=20:y=20[vo];[as2]pan=stereo|c0=c0|c1=c1[ao] --title ""Preview Window " . CHNAME . """ --window-scale=0.5 --osc=no --input-default-bindings=no --untimed --no-demuxer-thread  --vd-lavc-threads=1 " . mpv_geometry[channel_index]					;  with audio. many latency
 ;preview_param_mpv := "--lavfi-complex=[aid1]showvolume=r=29.97[vvolume];[vid1]format=pix_fmts=yuv420p[vfmt];[vfmt][vvolume]overlay=x=20:y=20[vo] --title ""Preview Window " . CHNAME . """ --window-scale=0.5 --osc=no --input-default-bindings=no --cache=no --cache-secs=0 --video-sync=audio --untimed --no-demuxer-thread  --vd-lavc-threads=1 --no-audio " . mpv_geometry[channel_index]		; single stream, multi channel, without audio PB. very low latency
- ; --untimed --no-demuxer-thread  --vd-lavc-threads=1 --no-audio	--video-sync=audio			; additional option for low latency
+; --untimed --no-demuxer-thread  --vd-lavc-threads=1 --no-audio	--video-sync=audio			; additional option for low latency
 ;--------------------------------------------------- ffmpeg parameter for EE Preview -------------------------------------------------------------------------
 
 ;-------------------------------------------------- mpv parameter for EE Preview ----------------------------------------------------------------------------
@@ -418,7 +397,7 @@ mpv --lavfi-complex=[aid1]showvolume=r=29.97[vvolume1];[aid2]showvolume=r=29.97[
 
 ;preview_param_mpv := "--lavfi-complex=[aid1]showvolume=r=29.97:t=0:v=0:h=10[vvolume1];[aid2]showvolume=r=29.97:t=0:v=0:h=10[vvolume2];[vid1][vvolume1]overlay=x=20:y=30[vtemp];[vtemp][vvolume2]overlay=x=20:y=80[vo]  --osd-font-size=45 --no-border --osc=no   --input-default-bindings=no  --cache-secs=0 --video-sync=audio  --untimed --no-cache-pause --cache-backbuffer=0  --no-demuxer-thread  --framedrop=no --vd-lavc-threads=1 --no-audio " . param_mpv_add . mpv_geometry[channel_index] . " --title=""" . title_ee . """  --osd-msg1=""" . CHNAME . """ "	; multi stream, single channel		; without audio PB  		(Last good parameter 2019/6/19, 480x270 reseolution)
 
-preview_param_mpv := "--lavfi-complex=[aid1]showvolume=r=29.97:t=0:v=0:h=10[vvolume1];[aid2]showvolume=r=29.97:t=0:v=0:h=10[vvolume2];[vid1][vvolume1]overlay=x=20:y=30[vtemp];[vtemp][vvolume2]overlay=x=20:y=80[vo]  --osd-font-size=45 --no-border --osc=no   --input-default-bindings=no  --cache-secs=0  --no-cache-pause --cache-backbuffer=0  --no-audio --script=""" .  A_ScriptDir . "\cache_eater.lua"" " .  param_mpv_add . mpv_geometry[channel_index] . " --title=""" . title_ee . """  --osd-msg1=""" . CHNAME . """ "	; multi stream, single channel		; without audio PB  		(Last good parameter 2019/6/27, 480x270 reseolution, with cache-eater script)
+preview_param_mpv := "--lavfi-complex=[aid1]showvolume=r=29.97:t=0:v=0:h=10[vvolume1];[aid2]showvolume=r=29.97:t=0:v=0:h=10[vvolume2];[vid1][vvolume1]overlay=x=20:y=30[vtemp];[vtemp][vvolume2]overlay=x=20:y=80[vo] --osd-font-size=45 --no-border --osc=no --input-default-bindings=no --cache-secs=0 --no-cache-pause --cache-backbuffer=0 --no-audio --script=""" . A_ScriptDir . "\cache_eater.lua"" " . param_mpv_add . mpv_geometry[channel_index] . " --title=""" . title_ee . """ --osd-msg1=""" . CHNAME . """ "	; multi stream, single channel		; without audio PB  		(Last good parameter 2019/6/27, 480x270 reseolution, with cache-eater script)
 
 ;preview_param_mpv := "--lavfi-complex=[aid1]showvolume=r=29.97:t=0:v=0:h=10[vvolume1];[aid2]showvolume=r=29.97:t=0:v=0:h=10[vvolume2];[vid1][vvolume1]overlay=x=20:y=30[vtemp];[vtemp][vvolume2]overlay=x=20:y=80[vo]  --osd-font-size=45 --no-border --osc=no   --input-default-bindings=no  --cache-secs=0  --no-cache-pause --cache-backbuffer=0  --no-audio --script=""" .  A_ScriptDir . "\low_latency.lua"" " .  param_mpv_add . mpv_geometry[channel_index] . " --title=""" . title_ee . """  --osd-msg1=""" . CHNAME . """ "	; new mpa lua script applied 2020/4/28
 
@@ -481,7 +460,6 @@ for key, val in gui_stop
 for key, val in gui_rec
 	GuiControl, Disable, %val%
 
-
 gui -MinimizeBox -DPIScale -Resize
 updatelog("Start Application -----------------------------------------------")
 
@@ -496,34 +474,33 @@ if (channel_index = 1)
 checkfinishday(finishday)
 if !FileExist(binary_ffmpeg)
 {
-		MsgBox,, 알림, FFMPEG 인코더 파일이 없습니다. 종료 합니다, 4
-		updatelog("There is no encoder file " . binary_ffmpeg)
-		ExitApp
+	MsgBox,, 알림, FFMPEG 인코더 파일이 없습니다. 종료 합니다, 4
+	updatelog("There is no encoder file " . binary_ffmpeg)
+	ExitApp
 }
 
 if !FileExist(binary_mpv)
 {
-		MsgBox,, 알림, MPV 실행 파일이 없습니다. 종료 합니다, 4
-		updatelog("There is no MPV file " . binary_mpv)
-		ExitApp
+	MsgBox,, 알림, MPV 실행 파일이 없습니다. 종료 합니다, 4
+	updatelog("There is no MPV file " . binary_mpv)
+	ExitApp
 }
 
 if !FileExist(binary_ffmpeg_uhd)
 {
-		MsgBox,, 알림, UHD용 인코더 실행 파일이 없습니다. 종료 합니다, 4
-		updatelog("There is no UHD FFMPEG file " . binary_ffmpeg_uhd)
-		ExitApp
+	MsgBox,, 알림, UHD용 인코더 실행 파일이 없습니다. 종료 합니다, 4
+	updatelog("There is no UHD FFMPEG file " . binary_ffmpeg_uhd)
+	ExitApp
 }
 
 if !FileExist(binary_copymanager)
 {
-		MsgBox,, 알림, 카피메니저 실행 파일이 없습니다. 종료 합니다, 4
-		updatelog("There is no copymanager file " . binary_copymanager)
-		ExitApp
+	MsgBox,, 알림, 카피메니저 실행 파일이 없습니다. 종료 합니다, 4
+	updatelog("There is no copymanager file " . binary_copymanager)
+	ExitApp
 }
 
 OnExit("ExitFunc")
-
 
 gosub displaynow
 gosub codec_change
@@ -531,7 +508,6 @@ if (channel_index = 1)
 	SetTimer, cleanup_log, -500
 
 return
-
 
 get_stream_address(ini_file)
 {
@@ -546,7 +522,7 @@ get_decklinkname(default_name, channel_index)
 	decklink_name := RegExReplace(decklink_name, "[""]")			; remove double quotation if exist
 	decklink_name = "%decklink_name%"										; apply double quotation
 	;FileAppend, %decklink_name%`r`n, *
-	return  decklink_name
+	return decklink_name
 
 }
 
@@ -562,38 +538,35 @@ url_to_address_array(url)		; convert human visible url  -> separate address, por
 	return address_array
 }
 
-
 GuiDropFiles:
 
-GuiControl,, %hstatus%, Analysing Media...Please wait
-media.fullpath := A_GuiEvent
-analyse_media(media, minfo)
+	GuiControl,, %hstatus%, Analysing Media...Please wait
+	media.fullpath := A_GuiEvent
+	analyse_media(media, minfo)
 
-GuiControl,, %hstatus%, % "Finish Analysing Media /  (audio format " . media.audio_format . " / Scan type " . media.scantype . " / Duration " . media.duration . ")"
-updatelog("Drag drop media file . " .  A_GuiEvent . "   Media audio format is " . media.audio_format . " Scan type is " . media.scantype . " Duration is " . media.duration)
+	GuiControl,, %hstatus%, % "Finish Analysing Media / (audio format " . media.audio_format . " / Scan type " . media.scantype . " / Duration " . media.duration . ")"
+	updatelog("Drag drop media file . " . A_GuiEvent . " Media audio format is " . media.audio_format . " Scan type is " . media.scantype . " Duration is " . media.duration)
 
-file_srt := makesrt(A_GuiEvent, media.duration)		; 	; make srt before file play
+	file_srt := makesrt(A_GuiEvent, media.duration)		; 	; make srt before file play
 
-runstring := binary_mpv . " " . mpv_filter[media.audio_format] . audio_monitor_filter
-FileAppend, % media.width, *
-if (media.width > 1600)				; audio spectrum video have 1564 width
-	runstring = %runstring% --window-scale=0.5
+	runstring := binary_mpv . " " . mpv_filter[media.audio_format] . audio_monitor_filter
+	FileAppend, % media.width, *
+	if (media.width > 1600)				; audio spectrum video have 1564 width
+		runstring = %runstring% --window-scale=0.5
 
-if (media.scantype = "interlaced")
-	runstring .= " --deinterlace=yes "
-SplitPath, A_GuiEvent, outfilename
-runstring = %runstring%  --title "%outfilename%" --sub-pos=10  --keep-open "%A_GuiEvent%"
-Run, %runstring%,, Minimize
+	if (media.scantype = "interlaced")
+		runstring .= " --deinterlace=yes "
+	SplitPath, A_GuiEvent, outfilename
+	runstring = %runstring% --title "%outfilename%" --sub-pos=10 --keep-open "%A_GuiEvent%"
+	Run, %runstring%,, Minimize
 
 ;SetTimer, delete_srt, -3000				; making srt takes long time
 return
 
-
 delete_srt:
-FileDelete, %file_srt%
-updatelog("SRT file deleted ... " . file_srt)
+	FileDelete, %file_srt%
+	updatelog("SRT file deleted ... " . file_srt)
 return
-
 
 get_media_date(file)
 {
@@ -608,7 +581,6 @@ get_media_date(file)
 		return outputvar
 	}
 }
-
 
 makesrt(file_movie, duration=3600)			; make srt before file play
 {
@@ -636,10 +608,6 @@ makesrt(file_movie, duration=3600)			; make srt before file play
 	return srtfile
 }
 
-
-
-
-
 analyse_media(ByRef media, o_mi)			; new, 2019/4/3 from mediainfo.dll
 {
 	o_mi.open(media.fullpath)
@@ -655,7 +623,7 @@ analyse_media(ByRef media, o_mi)			; new, 2019/4/3 from mediainfo.dll
 	media.audio_format := o_mi.getaudiocount()
 	media.codecv := o_mi.getvideo("Format")
 	media.codeca := o_mi.getaudio("Format")
-	media.durationframe :=  o_mi.getvideo("FrameCount")
+	media.durationframe := o_mi.getvideo("FrameCount")
 	media.scantype := o_mi.getvideo("ScanType")
 	if (!media.scantype)
 		media.scantype := "Progressive"
@@ -664,38 +632,34 @@ analyse_media(ByRef media, o_mi)			; new, 2019/4/3 from mediainfo.dll
 
 }
 
-
-
 return
-
 
 displaynow:
-WinSetTitle, ahk_id %hthiswindow%,, % title . "      [" . audiomonl . " - "  . audiomonr . "]   " .    formatednow()
+	WinSetTitle, ahk_id %hthiswindow%,, % title . " [" . audiomonl . " - " . audiomonr . "] " . formatednow()
 
-if (channel_index = 1)			; new 2019/6/15,  VTR1 Specific job (delete old file, cleanup log...)
-{
-	DriveSpaceFree, size_free, % folders_capture[1]		; result is in MB,      update 2019/7/30
-	if (size_free < size_reserve )											; free space is smaller than reserved capacity
+	if (channel_index = 1)			; new 2019/6/15,  VTR1 Specific job (delete old file, cleanup log...)
 	{
-		updatelog(folders_capture[1] .  "  Free space : " . size_free . " MB Left")
-		Loop, 5																		; update 2019/7/30 (each vtr has different path_rec)
-			updatelog(deleteoldestfile(folders_capture[A_Index]))	;	 Delete oldest file from each rec path
+		DriveSpaceFree, size_free, % folders_capture[1]		; result is in MB,      update 2019/7/30
+		if (size_free < size_reserve )											; free space is smaller than reserved capacity
+		{
+			updatelog(folders_capture[1] . " Free space : " . size_free . " MB Left")
+			Loop, 5																		; update 2019/7/30 (each vtr has different path_rec)
+				updatelog(deleteoldestfile(folders_capture[A_Index]))	;	 Delete oldest file from each rec path
+		}
+		if InStr(time_cleanup, SubStr(formatednow(),1,5))			; compare hh:mm with 'time_cleanup' and periodically delete old files
+			SetTimer, cleanup_log, -500
 	}
-	if InStr(time_cleanup, SubStr(formatednow(),1,5))			; compare hh:mm with 'time_cleanup' and periodically delete old files
+
+	/*  old manner
+	if ((channel_index = 1) and (size_free < size_reserve ))						; free space is smaller than reserved capacity
+		updatelog("Free space : " . size_free . " MB Left / " . deleteoldestfile(path_rec))		;	 Delete oldest file from rec path
+
+	if ((channel_index = 1) and InStr(time_cleanup, SubStr(outputvar,1,5)))			; compare hh:mm with 'time_cleanup' and periodically delete old files
 		SetTimer, cleanup_log, -500
-}
+	*/
 
-/*  old manner
-if ((channel_index = 1) and (size_free < size_reserve ))						; free space is smaller than reserved capacity
-	updatelog("Free space : " . size_free . " MB Left / " . deleteoldestfile(path_rec))		;	 Delete oldest file from rec path
-
-if ((channel_index = 1) and InStr(time_cleanup, SubStr(outputvar,1,5)))			; compare hh:mm with 'time_cleanup' and periodically delete old files
-	SetTimer, cleanup_log, -500
-*/
-
-SetTimer, displaynow, % -(61 - A_Sec) * 1000
+	SetTimer, displaynow, % -(61 - A_Sec) * 1000
 return
-
 
 formatednow()
 {
@@ -703,55 +667,48 @@ formatednow()
 	return outputvar
 }
 
-
-
 cleanup_log:			; delete old log file
 
-if autodelete_age			; positive value, unit is hour
-	updatelog(deleteoldfiles(path_rec, autodelete_age))				; auto delete Record file (unit is hour)
+	if autodelete_age			; positive value, unit is hour
+		updatelog(deleteoldfiles(path_rec, autodelete_age))				; auto delete Record file (unit is hour)
 
-updatelog(deleteoldfiles(A_WorkingDir . "\log" , 8760))			; Delete log files
-for key, val in files_log					; rename large log file
-{
-	FileGetSize, outputvar, %val%
-	if (outputvar > 1000000)					; log size is larger than limit
+	updatelog(deleteoldfiles(A_WorkingDir . "\log" , 8760))			; Delete log files
+	for key, val in files_log					; rename large log file
 	{
-		FileMove, %val%, %val%_old_%A_Year%%A_Mon%%A_DD%_%A_Hour%%A_Min%.log, 1
-		updatelog("Log file renamed " . val . "Size is " . outputvar)
+		FileGetSize, outputvar, %val%
+		if (outputvar > 1000000)					; log size is larger than limit
+		{
+			FileMove, %val%, %val%_old_%A_Year%%A_Mon%%A_DD%_%A_Hour%%A_Min%.log, 1
+			updatelog("Log file renamed " . val . "Size is " . outputvar)
+		}
 	}
-}
 
 return
-
-
-
 
 codec_change:
-GuiControlGet, codec_choice
-GuiControl,, %hgroupbox%, %CHNAME%-%codec_choice%
-preview_param := preview_param_list[codec_choice]
-binary_encoder := encoder_array[codec_choice]
-FileAppend, %binary_encoder%`r`n, *
+	GuiControlGet, codec_choice
+	GuiControl,, %hgroupbox%, %CHNAME%-%codec_choice%
+	preview_param := preview_param_list[codec_choice]
+	binary_encoder := encoder_array[codec_choice]
+	FileAppend, %binary_encoder%`r`n, *
 
 return
-
 
 text1:
-Run, explorer %path_dst%
+	Run, explorer %path_dst%
 
 return
 
-
 text2:
-if FileExist(file_rec_full)
-	run, explorer.exe /select`, "%file_rec_full%"
-else
-	run, explorer.exe "%path_rec%"
+	if FileExist(file_rec_full)
+		run, explorer.exe /select`, "%file_rec_full%"
+	else
+		run, explorer.exe "%path_rec%"
 return
 
 get_wallclock_segmentlist(min, sec)				; get ffmpeg segmet time list by wallclock (each o'clock) for mpeg-ts only
 {
-	soption := "  -f segment -fflags +genpts -reset_timestamps 1 -segment_times "
+	soption := " -f segment -fflags +genpts -reset_timestamps 1 -segment_times "
 	rem_clock := (59-min) * 60 + (60-sec)
 	rem_clock := rem_clock < 60 ? rem_clock + 3600 : rem_clock
 	soption .= rem_clock
@@ -761,152 +718,141 @@ get_wallclock_segmentlist(min, sec)				; get ffmpeg segmet time list by wallcloc
 }
 
 start_rec:
-Gui, Submit, NoHide
-SetTimer, mpv_check, Off
-updatelog("[REC] Button pressed. Codec selection is " . codec_choice)
-for key, val in gui_stop
-	GuiControl, Disable, %val%
+	Gui, Submit, NoHide
+	SetTimer, mpv_check, Off
+	updatelog("[REC] Button pressed. Codec selection is " . codec_choice)
+	for key, val in gui_stop
+		GuiControl, Disable, %val%
 
+	pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
+	pid_mpv_preview := close_mpv(pid_mpv_preview)
+	flag_rec_restart := 0
+	updatelog("Restart Rec flag set to FALSE")
+	progress_var.dup_frame_old := 0
+	progress_var.drop_frame_old := 0
 
-pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
-pid_mpv_preview := close_mpv(pid_mpv_preview)
-flag_rec_restart := 0
-updatelog("Restart Rec flag set to FALSE")
-progress_var.dup_frame_old := 0
-progress_var.drop_frame_old := 0
+	; ----------------------------------- TC and file name parameter ----------------------------------------
+	tc_start := secondtotc_drop((A_Hour*3600 + A_Min*60 + A_Sec) . "." . A_MSec)
+	file_userinput := validatefilename(file_userinput)
 
+	last_name = %A_Year%%A_Mon%%A_DD%_%A_Hour%%A_Min%%A_Sec%
+	file_rec_full = %path_rec%%file_userinput%_%CHNAME%_%last_name%
+	file_rec_proxy_full = %file_rec_full%_proxy.mp4
+	if chk_split
+		file_rec_full .= "_%05d"
+	file_rec_full_old = %path_rec%%file_userinput%_%CHNAME%_%last_name%_00000
+	file_rec_full .= "." . extension[codec_choice]
+	file_rec_full_old .= "." . extension[codec_choice]
 
-; ----------------------------------- TC and file name parameter ----------------------------------------
-tc_start := secondtotc_drop((A_Hour*3600 + A_Min*60 + A_Sec) . "." . A_MSec)
-file_userinput := validatefilename(file_userinput)
+	updatelog("Rec file name is " . file_rec_full)
+	; ----------------------------------- TC and file name parameter ----------------------------------------
 
-last_name = %A_Year%%A_Mon%%A_DD%_%A_Hour%%A_Min%%A_Sec%
-file_rec_full = %path_rec%%file_userinput%_%CHNAME%_%last_name%
-file_rec_proxy_full = %file_rec_full%_proxy.mp4
-if chk_split
-	file_rec_full .= "_%05d"
-file_rec_full_old = %path_rec%%file_userinput%_%CHNAME%_%last_name%_00000
-file_rec_full .= "." . extension[codec_choice]
-file_rec_full_old .= "." . extension[codec_choice]
+	; ----------------------------------- Encoder parameter ----------------------------------------
+	runstring := binary_encoder . " " . encoder_param[codec_choice] . " -progress " . url_progress
+	if (InStr(timecode_enabled, codec_choice)	and flag_tcwrite	)							; add timecode option for supported wrapper,                                   update 2020/4/8 check flag_tcwrite
+		runstring = %runstring% -timecode %tc_start% -drop_frame_timecode 1
+	if chk_split
+		if flag_sbsdvr
+			runstring := runstring . " " . get_wallclock_segmentlist(A_Min, A_Sec)			; make next o'clock segment list (SBS DVR only)
+		else
+			runstring := runstring . " " . split_param[codec_choice]									; normal segment list
+	runstring = %runstring% "%file_rec_full%"
+	;FileAppend, %runstring%, *
+	; ----------------------------------- Encoder parameter ----------------------------------------
 
-updatelog("Rec file name is " . file_rec_full)
-; ----------------------------------- TC and file name parameter ----------------------------------------
+	file_ffreport = ffmpeg_encoder_main_%file_userinput%[%A_DD%]_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%--[%CHNAME%].log
+	EnvSet, FFREPORT, file=%file_ffreport%:level=24				; error, 16 / warning, 24 / info, 32
+	Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg
+	WinWait, ahk_pid %pid_ffmpeg%
+	WinSetTitle, ahk_pid %pid_ffmpeg%,, %title_encoder_main%
+	updatelog("Encoder Started with pid " . pid_ffmpeg)
 
+	; ------------------------------------ Run EE Preview ------------------------------------------
+	runstring = %binary_mpv% %preview_param_mpv% %url_preview%
+	Run, %runstring%,,Minimize, pid_mpv_preview
+	;WinWait, ahk_pid %pid_mpv_preview%,,3
+	;WinMove, ahk_pid %pid_mpv_preview%,, 20000, 20000				; Move away invisible area
+	;WinSetTitle, ahk_pid %pid_mpv_preview%,, %title_ee%
+	SetTimer, SetMPVtitle, -1000
+	updatelog("MPV Preview started with pid " . pid_mpv_preview)
+	; ------------------------------------ Run EE Preview ------------------------------------------
 
-; ----------------------------------- Encoder parameter ----------------------------------------
-runstring := binary_encoder . " " . encoder_param[codec_choice] . " -progress " . url_progress
-if (InStr(timecode_enabled, codec_choice)	and flag_tcwrite	)							; add timecode option for supported wrapper,                                   update 2020/4/8 check flag_tcwrite
-	runstring = %runstring%  -timecode %tc_start% -drop_frame_timecode 1
-if chk_split
-	if flag_sbsdvr
-		runstring := runstring . " " . get_wallclock_segmentlist(A_Min, A_Sec)			; make next o'clock segment list (SBS DVR only)
-	else
-		runstring := runstring . " " .  split_param[codec_choice]									; normal segment list
-runstring = %runstring% "%file_rec_full%"
-;FileAppend, %runstring%, *
-; ----------------------------------- Encoder parameter ----------------------------------------
+	if chk_split				; change rec file name for encoder_check routine
+	{
+		file_rec_full := file_rec_full_old
+		updatelog("Split mode, first segment name is " . file_rec_full)
+	}
 
-file_ffreport = ffmpeg_encoder_main_%file_userinput%[%A_DD%]_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%--[%CHNAME%].log
-EnvSet, FFREPORT, file=%file_ffreport%:level=24				; error, 16 / warning, 24 / info, 32
-Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg
-WinWait, ahk_pid %pid_ffmpeg%
-WinSetTitle, ahk_pid %pid_ffmpeg%,, %title_encoder_main%
-updatelog("Encoder Started with pid " . pid_ffmpeg)
+	; ----------------------------------- Proxy Encoder --------------------------------------------------------
+	if chk_proxy
+	{
+		file_ffreport_proxy = ffmpeg_encoder_proxy_%file_userinput%[%A_DD%]_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%.log
+		EnvSet, FFREPORT, file=%file_ffreport_proxy%:level=24
+		runstring = %binary_ffmpeg% %proxy_param% %duration_max_proxy% "%file_rec_proxy_full%"
+		Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg_proxy
+		WinWait, ahk_pid %pid_ffmpeg_proxy%
+		WinSetTitle, ahk_pid %pid_ffmpeg_proxy%,, %title_encoder_proxy%
+		updatelog("Proxy Encoder Started with pid " . pid_ffmpeg_proxy)
+	}
+	; ----------------------------------- Proxy Encoder --------------------------------------------------------
 
+	GuiControl,, %htext2%, % SubStr(file_rec_full, -65)						; show rec filename
+	GuiControl, show, %hred_bar%
+	SetTimer, encoder_check_once, -1500
 
-; ------------------------------------ Run EE Preview ------------------------------------------
-runstring = %binary_mpv% %preview_param_mpv% %url_preview%
-Run, %runstring%,,Minimize, pid_mpv_preview
-;WinWait, ahk_pid %pid_mpv_preview%,,3
-;WinMove, ahk_pid %pid_mpv_preview%,, 20000, 20000				; Move away invisible area
-;WinSetTitle, ahk_pid %pid_mpv_preview%,, %title_ee%
-SetTimer, SetMPVtitle, -1000
-updatelog("MPV Preview started with pid " . pid_mpv_preview)
-; ------------------------------------ Run EE Preview ------------------------------------------
-
-
-if chk_split				; change rec file name for encoder_check routine
-{
-	file_rec_full := file_rec_full_old
-	updatelog("Split mode, first segment name is " . file_rec_full)
-}
-
-
-; ----------------------------------- Proxy Encoder --------------------------------------------------------
-if chk_proxy
-{
-	file_ffreport_proxy = ffmpeg_encoder_proxy_%file_userinput%[%A_DD%]_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%.log
-	EnvSet, FFREPORT, file=%file_ffreport_proxy%:level=24
-	runstring = %binary_ffmpeg% %proxy_param% %duration_max_proxy% "%file_rec_proxy_full%"
-	Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg_proxy
-	WinWait, ahk_pid %pid_ffmpeg_proxy%
-	WinSetTitle, ahk_pid %pid_ffmpeg_proxy%,, %title_encoder_proxy%
-	updatelog("Proxy Encoder Started with pid " . pid_ffmpeg_proxy)
-}
-; ----------------------------------- Proxy Encoder --------------------------------------------------------
-
-
-GuiControl,, %htext2%, % SubStr(file_rec_full, -65)						; show rec filename
-GuiControl, show, %hred_bar%
-SetTimer, encoder_check_once, -1500
-
-for key, val in gui_rec
-	GuiControl, Enable, %val%
+	for key, val in gui_rec
+		GuiControl, Enable, %val%
 
 return
-
 
 rec_ee_limit:
-pid_mpv_preview := close_mpv(pid_mpv_preview)
+	pid_mpv_preview := close_mpv(pid_mpv_preview)
 return
-
 
 stop_rec:
-timer_tick("start")
-updatelog("[STOP] Button pressed")
+	timer_tick("start")
+	updatelog("[STOP] Button pressed")
 
-for key, val in gui_rec
-	GuiControl, Disable, %val%
-GuiControl, Disable, %hpreview%
+	for key, val in gui_rec
+		GuiControl, Disable, %val%
+	GuiControl, Disable, %hpreview%
 
-updatelog("GUI Change takes " . timer_tick("stop") . " msec")
-GuiControl,, %hstatus%, % "GUI Change takes " . timer_tick("stop") . " msec"
+	updatelog("GUI Change takes " . timer_tick("stop") . " msec")
+	GuiControl,, %hstatus%, % "GUI Change takes " . timer_tick("stop") . " msec"
 
-SetTimer, encoder_check, off
-SetTimer, encoder_check_once, Off
+	SetTimer, encoder_check, off
+	SetTimer, encoder_check_once, Off
 
-if chk_proxy
-	pid_ffmpeg_proxy := close_ffmpeg(pid_ffmpeg_proxy)
+	if chk_proxy
+		pid_ffmpeg_proxy := close_ffmpeg(pid_ffmpeg_proxy)
 
-pid_ffmpeg :=close_ffmpeg(pid_ffmpeg)
-pid_mpv_preview := close_mpv(pid_mpv_preview)
-FileGetSize, size_rec, %file_rec_full%
+	pid_ffmpeg :=close_ffmpeg(pid_ffmpeg)
+	pid_mpv_preview := close_mpv(pid_mpv_preview)
+	FileGetSize, size_rec, %file_rec_full%
 
-if flag_sbsdvr
-	FileMove, %file_rec_full% , % renametofiledate(file_rec_full)
+	if flag_sbsdvr
+		FileMove, %file_rec_full% , % renametofiledate(file_rec_full)
 
-updatelog("Finish Recording  " . file_rec_full . " / File size is " . size_rec . " Bytes")
+	updatelog("Finish Recording " . file_rec_full . " / File size is " . size_rec . " Bytes")
 
-for key, val in gui_stop
-	GuiControl, Enable, %val%
-GuiControl, Enable, %hpreview%
-GuiControl, Hide, %hred_bar%
-if flag_rec_restart
-{
-	updatelog("Restart REC flag is TRUE.. REC will start soon")
-	SetTimer, start_rec, -100
-}
-;else
-;	SetTimer, check_finish, -1000								; Double Check encoder finish		added 2019/10/11
-updatelog("Closing Encoder takes " . timer_tick("stop") . " msec")	; calculate time for stop recording
-GuiControl,, %hstatus%, % "Closing Encoder takes " . timer_tick("stop") . " msec"
+	for key, val in gui_stop
+		GuiControl, Enable, %val%
+	GuiControl, Enable, %hpreview%
+	GuiControl, Hide, %hred_bar%
+	if flag_rec_restart
+	{
+		updatelog("Restart REC flag is TRUE.. REC will start soon")
+		SetTimer, start_rec, -100
+	}
+	;else
+	;	SetTimer, check_finish, -1000								; Double Check encoder finish		added 2019/10/11
+	updatelog("Closing Encoder takes " . timer_tick("stop") . " msec")	; calculate time for stop recording
+	GuiControl,, %hstatus%, % "Closing Encoder takes " . timer_tick("stop") . " msec"
 return
 
-
-
 check_finish:
-Process, Exist, %pid_ffmpeg%
-if ErrorLevel
+	Process, Exist, %pid_ffmpeg%
+	if ErrorLevel
 	{
 		RunWait, taskkill /pid %pid_ffmpeg%,, Hide
 		SetTimer, check_finish, -1000
@@ -919,10 +865,6 @@ if ErrorLevel
 		pid_ffmpeg := -1
 	}
 return
-
-
-
-
 
 timer_tick(param)
 {
@@ -937,7 +879,7 @@ timer_tick(param)
 }
 
 encoder_check_once:
-Process, Exist, %pid_ffmpeg%
+	Process, Exist, %pid_ffmpeg%
 	if !ErrorLevel
 	{
 		updatelog("Encoder Stopped, There is cirtical problem. ffmpeg PID " . pid_ffmpeg)			; ffmpeg exit immediately (There is something wrong)
@@ -965,7 +907,6 @@ Process, Exist, %pid_ffmpeg%
 	}
 return
 
-
 sendamcp(filename)					; send play command to CCG (confi operate)
 {
 	SplitPath, filename, outfilename
@@ -982,7 +923,6 @@ sendamcp(filename)					; send play command to CCG (confi operate)
 		updatelog("Error while sending amcp command")
 }
 
-
 renametofiledate(f)
 {
 	SplitPath, f, outfilename, outdir, outextension, outnamenoext, outdrive
@@ -994,117 +934,117 @@ renametofiledate(f)
 }
 
 encoder_check:
-Critical					; added 2019/8/22
-if chk_split
-{
-	;updatelog("Current segment is " . file_rec_full)
-	;updatelog("<Next> segment is " . getnextsegment(file_rec_full, 5))
-	if FileExist(getnextsegment(file_rec_full))
+	Critical					; added 2019/8/22
+	if chk_split
 	{
-		FileGetSize, size_rec, %file_rec_full%
-		updatelog("Finish recording segment file " . file_rec_full . " / Size is " . size_rec . " Bytes")
-		if flag_sbsdvr
-			FileMove, %file_rec_full% , % renametofiledate(file_rec_full)
-		file_rec_full := getnextsegment(file_rec_full)
-		updatelog("There is rec file name change, new file name is " . file_rec_full)
-		GuiControl,, %htext2%, % SubStr(file_rec_full, -65)						; show rec filename, last few character
-	}
-}
-
-FileGetSize, size_rec, %file_rec_full%
-FileGetSize, size_ffreport, %A_WorkingDir%\log\%file_ffreport%			; read size of ffreport file
-FileRead, text_ffreport, %A_WorkingDir%\log\%file_ffreport%				; read contents of ffreport file
-
-;GuiControl,, %hfilesizedisplay%, % "Size " . Round(size_rec / 1000000) . " MB"
-GuiControl,, %hstatus%, % "Progress Time " . progress_var.time . " - Size " . progress_var.size . " - Frame " . progress_var.frame . " - DUP " . progress_var.dup_frame . " - DROP " . progress_var.drop_frame . " - FFREPORT " . size_ffreport . " - Speed " . progress_var.speed
-GuiControl,, %hrectimedisplay%, % progress_var.time . " / " . Round(size_rec / 1048576) . " MB"
-
-;size_rec := progress_var.size				; change size_rec to streaming size 2019/6/5 (in split rec mode , large size file closing takes very long time introduce wrong decision)
-; SPLIT MODE, progress_var.size does not incresing during finalizing segment file (Find 2019/6/7)
-
-if (progress_var.dup_frame_old != progress_var.dup_frame)
-	updatelog("DUP  changed at time " . progress_var.time . " / DUP is " . progress_var.dup_frame)
-
-if (progress_var.dup_frame > 100)					; added 2020/5/27			(for UHD)
-{
-	updatelog("FFMPEG dup value exceed limit. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/  PID " . pid_ffmpeg)
-	updatelog("FFMPEG DUP value is " . progress_var.dup_frame )
-	if chk_proxy
-		close_ffmpeg(pid_ffmpeg_proxy)
-	close_ffmpeg(pid_ffmpeg)
-}
-
-/* 			rc buffer underflow example ----------------------------------------------
-[mpeg2video @ 0000000002272540] rc buffer underflow
-[mpeg2video @ 0000000002272540] max bitrate possibly too small or try trellis with large lmax or increase qmax
-[mpeg2video @ 0000000002272540] rc buffer underflow
-[mpeg2video @ 0000000002272540] max bitrate possibly too small or try trellis with large lmax or increase qmax
-*/
-
-if ((size_ffreport - size_ffreport_old) > 15000)			; There is great ffreport log increment (before 500, 2019/11/15 changed to 2000)	, changed 2000 -> 6000 (2020/4/10) -> 15000 (2020/7/15)
-{
-		updatelog("FFMPEG log report abnormal size incresing. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/  PID " . pid_ffmpeg)
-		updatelog("FFMPEG Log file size is " . size_ffreport . " Byte /  Delta is " . size_ffreport - size_ffreport_old . " Byte")
-		if chk_proxy
-				close_ffmpeg(pid_ffmpeg_proxy)
-		close_ffmpeg(pid_ffmpeg)
-}
-
-if InStr(text_ffreport, "! frame dropped!")				; Terminate ffmpeg if there is frame dropping. added 2020/4/10
-{
-	updatelog("FFMPEG log report Frame dropping. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/  PID " . pid_ffmpeg)
-	if chk_proxy
-		close_ffmpeg(pid_ffmpeg_proxy)
-	close_ffmpeg(pid_ffmpeg)
-}
-
-if (chk_transfer and !(file_rec_full_old  = file_rec_full))		; Transfer is enabled, rec file name change is detected is SPLIT REC Mode
-{
-	updatelog("OLD FILE="  . file_rec_full_old . "   /   NEW FILE="  . file_rec_full )
-	updatelog("Triggering Transfer, 5000 msec")
-	Random, rand, 1, 2000
-	SetTimer, transfer_trigger, % -5000-rand
-}
-
-if (size_rec = size_rec_old)				; check if there is rec file size incresing
-{
-	count_size_mon++
-	if (count_size_mon > 5)
-	{
-		updatelog("Recording File size is not increasing [" . count_size_mon . "] seconds")
-		updatelog("file_rec is " . file_rec_full . " / Rec file size is " . size_rec )
+		;updatelog("Current segment is " . file_rec_full)
+		;updatelog("<Next> segment is " . getnextsegment(file_rec_full, 5))
+		if FileExist(getnextsegment(file_rec_full))
+		{
+			FileGetSize, size_rec, %file_rec_full%
+			updatelog("Finish recording segment file " . file_rec_full . " / Size is " . size_rec . " Bytes")
+			if flag_sbsdvr
+				FileMove, %file_rec_full% , % renametofiledate(file_rec_full)
+			file_rec_full := getnextsegment(file_rec_full)
+			updatelog("There is rec file name change, new file name is " . file_rec_full)
+			GuiControl,, %htext2%, % SubStr(file_rec_full, -65)						; show rec filename, last few character
+		}
 	}
 
-	if (count_size_mon > 12)								; File size is not incresing during long period, (slow pc takes long time in finilizing large file)
+	FileGetSize, size_rec, %file_rec_full%
+	FileGetSize, size_ffreport, %A_WorkingDir%\log\%file_ffreport%			; read size of ffreport file
+	FileRead, text_ffreport, %A_WorkingDir%\log\%file_ffreport%				; read contents of ffreport file
+
+	;GuiControl,, %hfilesizedisplay%, % "Size " . Round(size_rec / 1000000) . " MB"
+	GuiControl,, %hstatus%, % "Progress Time " . progress_var.time . " - Size " . progress_var.size . " - Frame " . progress_var.frame . " - DUP " . progress_var.dup_frame . " - DROP " . progress_var.drop_frame . " - FFREPORT " . size_ffreport . " - Speed " . progress_var.speed
+	GuiControl,, %hrectimedisplay%, % progress_var.time . " / " . Round(size_rec / 1048576) . " MB"
+
+	;size_rec := progress_var.size				; change size_rec to streaming size 2019/6/5 (in split rec mode , large size file closing takes very long time introduce wrong decision)
+	; SPLIT MODE, progress_var.size does not incresing during finalizing segment file (Find 2019/6/7)
+
+	if (progress_var.dup_frame_old != progress_var.dup_frame)
+		updatelog("DUP changed at time " . progress_var.time . " / DUP is " . progress_var.dup_frame)
+
+	if (progress_var.dup_frame > 100)					; added 2020/5/27			(for UHD)
 	{
-		updatelog("Terminating Encoder (Rec file size is not increasing) /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/ PID " . pid_ffmpeg)
+		updatelog("FFMPEG dup value exceed limit. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/ PID " . pid_ffmpeg)
+		updatelog("FFMPEG DUP value is " . progress_var.dup_frame )
 		if chk_proxy
 			close_ffmpeg(pid_ffmpeg_proxy)
 		close_ffmpeg(pid_ffmpeg)
-		count_size_mon := 0
 	}
-}
-else
-	count_size_mon := 0
 
-if ((flag_sbsdvr) and InStr(A_Hour . A_Min , "0429") and A_Sec >= 58)			; Added 2019/7/20  (SBS Dvr mode, Recording reset every 4:29.58 AM)
-{
-	close_ffmpeg(pid_ffmpeg)
-	updatelog("Finish Recording file,  SBS DVR Mode _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_ PID " . pid_ffmpeg)
-}
+	/* 			rc buffer underflow example ----------------------------------------------
+	[mpeg2video @ 0000000002272540] rc buffer underflow
+	[mpeg2video @ 0000000002272540] max bitrate possibly too small or try trellis with large lmax or increase qmax
+	[mpeg2video @ 0000000002272540] rc buffer underflow
+	[mpeg2video @ 0000000002272540] max bitrate possibly too small or try trellis with large lmax or increase qmax
+	*/
 
-file_rec_full_old := file_rec_full
-size_rec_old := size_rec
-size_ffreport_old := size_ffreport
-progress_var.dup_frame_old := progress_var.dup_frame
-progress_var.drop_frame_old := progress_var.drop_frame
+	if ((size_ffreport - size_ffreport_old) > 15000)			; There is great ffreport log increment (before 500, 2019/11/15 changed to 2000)	, changed 2000 -> 6000 (2020/4/10) -> 15000 (2020/7/15)
+	{
+		updatelog("FFMPEG log report abnormal size incresing. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/ PID " . pid_ffmpeg)
+		updatelog("FFMPEG Log file size is " . size_ffreport . " Byte / Delta is " . size_ffreport - size_ffreport_old . " Byte")
+		if chk_proxy
+			close_ffmpeg(pid_ffmpeg_proxy)
+		close_ffmpeg(pid_ffmpeg)
+	}
 
-Process, Exist, %pid_ffmpeg%
+	if InStr(text_ffreport, "! frame dropped!")				; Terminate ffmpeg if there is frame dropping. added 2020/4/10
+	{
+		updatelog("FFMPEG log report Frame dropping. Terminating Encoder /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/ PID " . pid_ffmpeg)
+		if chk_proxy
+			close_ffmpeg(pid_ffmpeg_proxy)
+		close_ffmpeg(pid_ffmpeg)
+	}
+
+	if (chk_transfer and !(file_rec_full_old = file_rec_full))		; Transfer is enabled, rec file name change is detected is SPLIT REC Mode
+	{
+		updatelog("OLD FILE=" . file_rec_full_old . " / NEW FILE=" . file_rec_full )
+		updatelog("Triggering Transfer, 5000 msec")
+		Random, rand, 1, 2000
+		SetTimer, transfer_trigger, % -5000-rand
+	}
+
+	if (size_rec = size_rec_old)				; check if there is rec file size incresing
+	{
+		count_size_mon++
+		if (count_size_mon > 5)
+		{
+			updatelog("Recording File size is not increasing [" . count_size_mon . "] seconds")
+			updatelog("file_rec is " . file_rec_full . " / Rec file size is " . size_rec )
+		}
+
+		if (count_size_mon > 12)								; File size is not incresing during long period, (slow pc takes long time in finilizing large file)
+		{
+			updatelog("Terminating Encoder (Rec file size is not increasing) /_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/ PID " . pid_ffmpeg)
+			if chk_proxy
+				close_ffmpeg(pid_ffmpeg_proxy)
+			close_ffmpeg(pid_ffmpeg)
+			count_size_mon := 0
+		}
+	}
+	else
+		count_size_mon := 0
+
+	if ((flag_sbsdvr) and InStr(A_Hour . A_Min , "0429") and A_Sec >= 58)			; Added 2019/7/20  (SBS Dvr mode, Recording reset every 4:29.58 AM)
+	{
+		close_ffmpeg(pid_ffmpeg)
+		updatelog("Finish Recording file, SBS DVR Mode _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_ PID " . pid_ffmpeg)
+	}
+
+	file_rec_full_old := file_rec_full
+	size_rec_old := size_rec
+	size_ffreport_old := size_ffreport
+	progress_var.dup_frame_old := progress_var.dup_frame
+	progress_var.drop_frame_old := progress_var.drop_frame
+
+	Process, Exist, %pid_ffmpeg%
 	if ErrorLevel
 		SetTimer, encoder_check, -1000				; Normal state, encoder is exist
 	else
 	{
-		updatelog("There is no Encoder PID (Encoder stopped), Try to Restart  (Triggering stop and start rec button) >>>>>>>>>>>>>>>>>>>")			; Encoder is not exist, Try to press rec_start button
+		updatelog("There is no Encoder PID (Encoder stopped), Try to Restart (Triggering stop and start rec button) >>>>>>>>>>>>>>>>>>>")			; Encoder is not exist, Try to press rec_start button
 		SetTimer, encoder_check, off
 		pid_ffmpeg := -1
 		GuiControl,, %hstatus%, Encoder Stopped, Try to Restart >>>>>>>>>>>>>>>>>
@@ -1113,45 +1053,42 @@ Process, Exist, %pid_ffmpeg%
 		SetTimer, stop_rec, -200
 	}
 
+	DriveSpaceFree, size_free, %path_rec%\		; result is in MB
+	;GuiControlGet, outputvar, enabled, %hstop_rec%				; removed 2019/9/3
 
-DriveSpaceFree, size_free, %path_rec%\		; result is in MB
-;GuiControlGet, outputvar, enabled, %hstop_rec%				; removed 2019/9/3
-
-if (size_free < 10000)		; free space is low
-{
-	updatelog("Drive space low.. Triggering stop Button 500ms. " . path_rec . "  /   " .  size_free . " MB left >>>>>>>>>>>>>>>>>")
-	GuiControl,, %hstatus%, % "Drive space low.. stop recording. " . path_rec . "  /   " .  size_free . " MB left"
-	SetTimer, stop_rec, -500					; Stop Recording at low HDD Capacity
-	SetTimer, encoder_check, Off
-}
+	if (size_free < 10000)		; free space is low
+	{
+		updatelog("Drive space low.. Triggering stop Button 500ms. " . path_rec . " / " . size_free . " MB left >>>>>>>>>>>>>>>>>")
+		GuiControl,, %hstatus%, % "Drive space low.. stop recording. " . path_rec . " / " . size_free . " MB left"
+		SetTimer, stop_rec, -500					; Stop Recording at low HDD Capacity
+		SetTimer, encoder_check, Off
+	}
 
 return
-
 
 transfer_trigger:
-GuiControl,Show, %hgreen_bar%
-;file_dst_full = %path_dst%%file_userinput%_%CHNAME%_%last_name%
-;file_dst_full .= "." . extension[codec_choice]
-SplitPath, file_rec_full, temp
-file_dst_full = %path_dst%\%temp%
+	GuiControl,Show, %hgreen_bar%
+	;file_dst_full = %path_dst%%file_userinput%_%CHNAME%_%last_name%
+	;file_dst_full .= "." . extension[codec_choice]
+	SplitPath, file_rec_full, temp
+	file_dst_full = %path_dst%\%temp%
 
-Run, %A_WorkingDir%\%binary_copymanager% "%file_rec_full%" "%file_dst_full%" "%title%" %channel_index%,,, pid_transfer
+	Run, %A_WorkingDir%\%binary_copymanager% "%file_rec_full%" "%file_dst_full%" "%title%" %channel_index%,,, pid_transfer
 
-updatelog("Transfer Started with pid " . pid_transfer . " [-->>] " . file_rec_full . "   --->   " . file_dst_full)
-SetTimer, transfer_check, -1000
+	updatelog("Transfer Started with pid " . pid_transfer . " [-->>] " . file_rec_full . " ---> " . file_dst_full)
+	SetTimer, transfer_check, -1000
 return
 
-
 transfer_check:
-Process, Exist, %pid_transfer%
-if ErrorLevel
-	SetTimer, transfer_check, -500
-else
-{
-	GuiControl,Hide, %hgreen_bar%
-	pid_transfer := -1
-	SetTimer, transfer_check, Off
-}
+	Process, Exist, %pid_transfer%
+	if ErrorLevel
+		SetTimer, transfer_check, -500
+	else
+	{
+		GuiControl,Hide, %hgreen_bar%
+		pid_transfer := -1
+		SetTimer, transfer_check, Off
+	}
 
 return
 
@@ -1166,7 +1103,7 @@ close_ffmpeg(pid)
 	{
 		count += 1
 		RunWait, taskkill /pid %pid%,, Hide UseErrorLevel
-		updatelog("Sending signal to FFMPEG, signal kill  [" . count . "]  times")
+		updatelog("Sending signal to FFMPEG, signal kill [" . count . "] times")
 		Process, Exist, %pid%
 		exist_process := ErrorLevel
 		if exist_process
@@ -1176,8 +1113,6 @@ close_ffmpeg(pid)
 	return -1
 }
 
-
-
 close_ffmpeg_old2(pid)
 {
 	Process, Exist, %pid%
@@ -1186,7 +1121,7 @@ close_ffmpeg_old2(pid)
 		RunWait, taskkill /pid %pid%,, Hide UseErrorLevel
 		result_close := A_LastError
 		updatelog("Closing FFMPEG result is " . result_close)
-		if  (!result_close)
+		if (!result_close)
 		{
 			updatelog("Successfully Close ffmpeg PID " . pid)		; Gracefully close ffmpeg
 			return pid
@@ -1202,18 +1137,16 @@ close_ffmpeg_old2(pid)
 	}
 	else
 	{
-		updatelog("Try to Close FFMPEG but PID is not found  / PID " . pid)
+		updatelog("Try to Close FFMPEG but PID is not found / PID " . pid)
 		return pid
 	}
 }
-
-
 
 close_ffmpeg_old_until201909(pid)
 {
 	Process, Exist, %pid%
 	if ErrorLevel				; ffmpeg is running
-		{
+	{
 		Loop, 3
 		{
 			ControlSend,, "q", ahk_pid %pid%		; send 'q' key stroke many times
@@ -1228,7 +1161,7 @@ close_ffmpeg_old_until201909(pid)
 		else
 		{
 			Run, taskkill /f /t /pid %pid%,, Hide						; There is window with ffmpeg pid
-			updatelog("Error normal closing ffmpeg PID " . pid . "  /  Sending Kill Signal")
+			updatelog("Error normal closing ffmpeg PID " . pid . " / Sending Kill Signal")
 			return -1
 		}
 	}
@@ -1264,142 +1197,125 @@ close_mpv(pid)
 	}
 }
 
-
 settarget:
-IniRead, path_dst, target.ini, Target, path
-guicontrol,,%htext1%,  Target : %path_dst%
-guicontrol,,%hstatus%, Target Folder is %path_dst% (%A_DD% %A_Hour%:%A_Min%.%A_Sec%)
-IniWrite, %path_dst%, svcr%channel_index%.ini, path, target                  ; write ini immediately after selecting target
-updatelog("Selected target is " . path_dst)
+	IniRead, path_dst, target.ini, Target, path
+	guicontrol,,%htext1%, Target : %path_dst%
+	guicontrol,,%hstatus%, Target Folder is %path_dst% (%A_DD% %A_Hour%:%A_Min%.%A_Sec%)
+	IniWrite, %path_dst%, svcr%channel_index%.ini, path, target ; write ini immediately after selecting target
+	updatelog("Selected target is " . path_dst)
 return
 
-
-
-
-
 sel_target:
-updatelog("Select Target Button pressed")
-path_dst := selectfolder(path_dst)
+	updatelog("Select Target Button pressed")
+	path_dst := selectfolder(path_dst)
 
-guicontrol,,%htext1%,  Target : %path_dst%
-guicontrol,,%hstatus%, Target Folder is %path_dst% (%A_DD% %A_Hour%:%A_Min%.%A_Sec%)
-IniWrite, %path_dst%, svcr%channel_index%.ini, path, target                  ; write ini immediately after selecting target
-updatelog("Selected target is " . path_dst)
+	guicontrol,,%htext1%, Target : %path_dst%
+	guicontrol,,%hstatus%, Target Folder is %path_dst% (%A_DD% %A_Hour%:%A_Min%.%A_Sec%)
+	IniWrite, %path_dst%, svcr%channel_index%.ini, path, target ; write ini immediately after selecting target
+	updatelog("Selected target is " . path_dst)
 return
 
 selectfolder(folder)
 {
 	folder_old := folder
-	FileSelectFolder, OutputVar, *%folder%, 3, Select Target Folder          ; option 3 = create new folder, paste text path is possible  2018/1/15
+	FileSelectFolder, OutputVar, *%folder%, 3, Select Target Folder ; option 3 = create new folder, paste text path is possible  2018/1/15
 
-	if OutputVar =                       ; Select cancel
+	if OutputVar = ; Select cancel
 		return folder_old
 	else
 	{
-		path_dst :=RegExReplace(OutputVar, "\\$")  ; Removes the trailing backslash, if present.
+		path_dst :=RegExReplace(OutputVar, "\\$") ; Removes the trailing backslash, if present.
 		path_dst =%path_dst%\
 		return path_dst
 	}
 }
 
-
 preview:
-updatelog("[EE] Button pressed")
-SetTimer, mpv_check, Off
-SetTimer, rec_ee_limit, Off			; Disable Auto close EE preview window if it activated	(start REC and Press EE within 20 second)
-Critical
-runstring = %binary_encoder% %preview_param%
-EnvSet, FFREPORT, file=ffmpeg_preview_%A_DD%_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%--[%CHNAME%].log:level=24
+	updatelog("[EE] Button pressed")
+	SetTimer, mpv_check, Off
+	SetTimer, rec_ee_limit, Off			; Disable Auto close EE preview window if it activated	(start REC and Press EE within 20 second)
+	Critical
+	runstring = %binary_encoder% %preview_param%
+	EnvSet, FFREPORT, file=ffmpeg_preview_%A_DD%_%A_Hour%_%A_Min%_%A_Sec%_%A_MSec%--[%CHNAME%].log:level=24
 
+	pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
+	pid_mpv_preview := close_mpv(pid_mpv_preview)
+	WinKill, %title_ee%,, 0						; added 2019/11/21 (double chkeck if there is ffmpeg encoder window)
+	Process, Exist, %pid_ffmpeg%
+	if !ErrorLevel								; ffmpeg main encoder is not running
+	{
+		Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg_preview
+		WinWait, ahk_pid %pid_ffmpeg_preview%
+		WinSetTitle, ahk_pid %pid_ffmpeg_preview%,, %title_ee%
+		updatelog("Encoder for preview started with pid " . pid_ffmpeg_preview)
+	}
 
+	; ------------------------------------ Run EE Preview ------------------------------------------
+	runstring = %binary_mpv% %preview_param_mpv% %url_preview%
+	Run, %runstring%,,Minimize, pid_mpv_preview
+	SetTimer, SetMPVtitle, -1000
+	updatelog("MPV Preview started with pid " . pid_mpv_preview)
+	; ------------------------------------ Run EE Preview ------------------------------------------
 
-pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
-pid_mpv_preview := close_mpv(pid_mpv_preview)
-WinKill, %title_ee%,, 0						; added 2019/11/21 (double chkeck if there is ffmpeg encoder window)
-Process, Exist, %pid_ffmpeg%
-if !ErrorLevel								; ffmpeg main encoder is not running
-{
-	Run, %runstring%, %A_WorkingDir%\log, Minimize, pid_ffmpeg_preview
-	WinWait, ahk_pid %pid_ffmpeg_preview%
-	WinSetTitle, ahk_pid %pid_ffmpeg_preview%,, %title_ee%
-	updatelog("Encoder for preview started with pid " . pid_ffmpeg_preview)
-}
-
-; ------------------------------------ Run EE Preview ------------------------------------------
-runstring = %binary_mpv% %preview_param_mpv% %url_preview%
-Run, %runstring%,,Minimize, pid_mpv_preview
-SetTimer, SetMPVtitle, -1000
-updatelog("MPV Preview started with pid " . pid_mpv_preview)
-; ------------------------------------ Run EE Preview ------------------------------------------
-
-SetTimer, mpv_check, -2000
-updatelog("mpv_check timer started")
+	SetTimer, mpv_check, -2000
+	updatelog("mpv_check timer started")
 return
-
-
 
 SetMPVtitle:
-Process, Exist, %pid_mpv_preview%
-if ErrorLevel				; MPV Preview window is  exist
-{
-	WinSetTitle, ahk_pid %pid_mpv_preview%,, %title_ee%
-	updatelog("Successfully Setup MPV Window title -- " . title_ee)
-}
-else
-	updatelog("MPV process is not found, pid is " . pid_mpv_preview)
-/*
-else
-{
-	SetTimer, SetMPVtitle, -200
-	updatelog("Trigering SetMPVtitle routine again")
-}
-*/
-return
-
-
-
-
-mpv_check:
-Process, Exist, %pid_mpv_preview%
-if ErrorLevel				; MPV Preview window is still exist
-	SetTimer, mpv_check, -400
-else								; MPV Preview window is closed
-{
-	updatelog("MPV preview window closed during mpv_check process, pid " . pid_mpv_preview)
-	pid_mpv_preview := -1
-	SetTimer, SetMPVtitle, Off
-	updatelog("Set MPV Title timer off")
-	pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
-	/*
-	Process, Exist, %pid_ffmpeg_preview%
-	if ErrorLevel					; There is encoder for preview
+	Process, Exist, %pid_mpv_preview%
+	if ErrorLevel				; MPV Preview window is  exist
 	{
-		Run, taskkill /f /pid %pid_ffmpeg_preview%,, Hide		; Close encoder for preview
-		updatelog("FFMPEG for preview encoder terminated during mpv_check process" . pid_ffmpeg_preview)
-		pid_ffmpeg_preview := -1
+		WinSetTitle, ahk_pid %pid_mpv_preview%,, %title_ee%
+		updatelog("Successfully Setup MPV Window title -- " . title_ee)
+	}
+	else
+		updatelog("MPV process is not found, pid is " . pid_mpv_preview)
+	/*
+	else
+	{
+		SetTimer, SetMPVtitle, -200
+		updatelog("Trigering SetMPVtitle routine again")
 	}
 	*/
-}
-
-
 return
 
+mpv_check:
+	Process, Exist, %pid_mpv_preview%
+	if ErrorLevel				; MPV Preview window is still exist
+		SetTimer, mpv_check, -400
+	else								; MPV Preview window is closed
+	{
+		updatelog("MPV preview window closed during mpv_check process, pid " . pid_mpv_preview)
+		pid_mpv_preview := -1
+		SetTimer, SetMPVtitle, Off
+		updatelog("Set MPV Title timer off")
+		pid_ffmpeg_preview := close_ffmpeg(pid_ffmpeg_preview)
+		/*
+		Process, Exist, %pid_ffmpeg_preview%
+		if ErrorLevel					; There is encoder for preview
+		{
+			Run, taskkill /f /pid %pid_ffmpeg_preview%,, Hide		; Close encoder for preview
+			updatelog("FFMPEG for preview encoder terminated during mpv_check process" . pid_ffmpeg_preview)
+			pid_ffmpeg_preview := -1
+		}
+		*/
+	}
 
-
+return
 
 ExitFunc(ExitReason, ExitCode)
 {
 	global pid_mpv_preview, pid_ffmpeg_preview, pid_ffmpeg, pid_ffmpeg_proxy
 	updatelog("Exit reason is " . ExitReason)
 	if ExitReason not in Logoff,Shutdown
-	 {
-        MsgBox, 4, Quit, Are you sure want to quit ?
-        IfMsgBox, No
+	{
+		MsgBox, 4, Quit, Are you sure want to quit ?
+		IfMsgBox, No
 		{
 			updatelog("User denied closing application")
-            return 1  ; OnExit functions must return non-zero to prevent exit.
+			return 1 ; OnExit functions must return non-zero to prevent exit.
 		}
-    }
+	}
 	updatelog("Preparing closing Application")
 	close_mpv(pid_mpv_preview)
 	close_ffmpeg(pid_ffmpeg_preview)
@@ -1409,12 +1325,9 @@ ExitFunc(ExitReason, ExitCode)
 	return 0
 }
 
-
 GuiClose:
-updatelog("Closing GUI.....")
+	updatelog("Closing GUI.....")
 ExitApp
-
-
 
 ;----------- Delete old files, unit is hour hour hour hour  !!!!! ------------------------------
 deleteoldfiles(path, hour=87600)			; 10 year = 87600 hour,
@@ -1425,11 +1338,11 @@ deleteoldfiles(path, hour=87600)			; 10 year = 87600 hour,
 	Loop, %path%\*.*
 	{
 		time_now := A_Now
-		FileGetTime, outputvar, %A_LoopFileFullPath%, M   			; get file Modify time
+		FileGetTime, outputvar, %A_LoopFileFullPath%, M 			; get file Modify time
 		time_now -= outputvar, Hours													; get time difference between now and file time
 		if (time_now > hour)																	; some action for aged files
 		{
-			list_file .= "`r`n" . A_LoopFileFullPath . "  -  " . outputvar  . "  -  (" . time_now . ")"
+			list_file .= "`r`n" . A_LoopFileFullPath . " - " . outputvar . " - (" . time_now . ")"
 			count++
 			try
 			{
@@ -1442,7 +1355,7 @@ deleteoldfiles(path, hour=87600)			; 10 year = 87600 hour,
 		}
 	}
 	;ToolTip %list_file%%count%
-	return count . " Files Deleted / path is  " .  path . list_file
+	return count . " Files Deleted / path is " . path . list_file
 }
 
 deleteoldestfile(path)				; Search files in path and delete most old file (NEW !! 2020/11/4 sorting algorithm applied)
@@ -1470,9 +1383,8 @@ deleteoldestfile(path)				; Search files in path and delete most old file (NEW !
 		if !result_delete
 			break
 	}
-	return "File Deleted <" . Array[2] . ">  with ErrorLevel [" . result_delete . "]"
+	return "File Deleted <" . Array[2] . "> with ErrorLevel [" . result_delete . "]"
 }
-
 
 deleteoldestfile_backup(path)				; Search files in path and delete most old file
 {
@@ -1492,16 +1404,15 @@ deleteoldestfile_backup(path)				; Search files in path and delete most old file
 		}
 	}
 	try
-		FileDelete, %file_old%
+	FileDelete, %file_old%
 	catch e
 		updatelog("There is problem Deleting files >>>>>>>>> " . e.message)
 
 	if ErrorLevel
-		return "Error Deleting Oldest file  <" . file_old . ">"
+		return "Error Deleting Oldest file <" . file_old . ">"
 	else
 		return "Oldest file Deleted <" . file_old . ">"
 }
-
 
 getnextsegment(name, digit=5)				; find segment number and increse it  ,  example   getnextsegment("c:\test\test-00022.mpg")
 {
@@ -1515,17 +1426,15 @@ getnextsegment(name, digit=5)				; find segment number and increse it  ,  exampl
 
 }
 
-
 validatefilename(channel_name)
 {
 	channel_name = %channel_name%													; left, right trim (remove space)
 	channel_name := RegExReplace(channel_name,"[+\?<>!@#$%^&()\[\]/\\\*""|:;'``]", "_")	; remove invalid character as file name
-	channel_name := trim(channel_name)                           		 			; remove space left, right
+	channel_name := trim(channel_name) 		 			; remove space left, right
 	if channel_name =
 		channel_name = noname
 	return channel_name
 }
-
 
 getdatestring(param)
 {
@@ -1548,8 +1457,16 @@ onUDPRecv(this)			; FFMPEG Progress status UDP stream
 		if (string = v)					; check if there is valid command
 		{
 			updatelog("Remote command [" . string . "] arrived")
-			FileAppend, `n%k% -- %v%,  *
+			FileAppend, `n%k% -- %v%, *
 			GuiControlGet, outputvar, Enabled, % remote_control.handle[k]			; Check if button is enabled
+			if (k="transferc")
+			{
+				GuiControl,,chk_transfer,1
+			}
+			if (k="transferu")
+			{
+				GuiControl,,chk_transfer,0
+			}
 			if (k="preview")
 			{
 				SetTimer, preview,-1
@@ -1596,7 +1513,7 @@ onUDPRecv(this)			; FFMPEG Progress status UDP stream
 		progress_var.speed := value . "x"
 	}
 
-foundpos := RegExMatch(string, "fps=\d+.\d+", fps)				; ffmpeg2014ver does not report speed
+	foundpos := RegExMatch(string, "fps=\d+.\d+", fps)				; ffmpeg2014ver does not report speed
 	if foundpos
 	{
 		RegExMatch(fps, "\d+.\d+", value)
@@ -1647,11 +1564,10 @@ send_mv_stop()				; Send multiviewer stop signal
 	print("Send Multiviewer stop signal")
 }
 
-
 updatelog(text)
 {
 	global logfile
-	FileAppend, [%A_Year%/%A_Mon%/%A_DD%] %A_Hour%:%A_Min%.%A_sec%_%A_MSec%  - %text%`r`n, %logfile%
+	FileAppend, [%A_Year%/%A_Mon%/%A_DD%] %A_Hour%:%A_Min%.%A_sec%_%A_MSec% - %text%`r`n, %logfile%
 }
 
 /*				; old, simple algorithm
@@ -1672,13 +1588,11 @@ secondtotc_drop(sec)
 }
 */
 
-
 secondtotc_drop(sec)			; changed 2020/3/23
 {
 	frames := Round(sec * 29.97)
 	return frametotc(frames)
 }
-
 
 frametotc(frames)					; changed 2020/3/23  (NTSC Drop frame Applied)
 {
@@ -1705,9 +1619,8 @@ frametotc(frames)					; changed 2020/3/23  (NTSC Drop frame Applied)
 	minutes := Mod(adjustedFrames // (fps_int * 60), 60)
 	hours := adjustedFrames // (fps_int * 3600)
 
-	return  format("{1:.01d}:{2:.02d}:{3:.02d};{4:.02d}", hours, minutes, seconds, frame)
+	return format("{1:.01d}:{2:.02d}:{3:.02d};{4:.02d}", hours, minutes, seconds, frame)
 }
-
 
 secondtotc(sec)
 {
@@ -1722,7 +1635,6 @@ secondtotc(sec)
 	return % hour . ":" . minute . ":" . second
 }
 
-
 checkfinishday(day)
 {
 	app_life := A_Now
@@ -1734,24 +1646,22 @@ checkfinishday(day)
 	}
 }
 
-
 showobjectlist(myobject)			; show object in tooltip
 {
 	temp := ""
 	for key, val in myobject
-		temp .= key . " ---->  " . val . "`r`n"
+		temp .= key . " ----> " . val . "`r`n"
 	ToolTip % temp
 }
 
 printobjectlist(myobject)			; show object in stdout
 {
-	temp := "`r`n--------------------   Print object list  ------------------------`r`n"
+	temp := "`r`n-------------------- Print object list ------------------------`r`n"
 	for key, val in myobject
-		temp .= key . " ---->  " . val . "`r`n"
+		temp .= key . " ----> " . val . "`r`n"
 	FileAppend, %temp%, *
 	return temp
 }
-
 
 class multiviewer
 {
@@ -1786,16 +1696,14 @@ class multiviewer
 	}
 }
 
-
 print(text)
 {
 	global hstatus
 	FormatTime, outputvar,, yyyy-MM-dd HH:mm:ss
-	FileAppend, `r`n%outputvar%  %text%, *
-	GuiControl,, %hstatus%, %outputvar%  %text%
+	FileAppend, `r`n%outputvar% %text%, *
+	GuiControl,, %hstatus%, %outputvar% %text%
 	return text
 }
-
 
 /*  Decklink Format Code
         format_code     description
@@ -1928,7 +1836,6 @@ decklink_copyts
 If set to true, timestamps are forwarded as they are without removing the initial offset. Defaults to false.
 timestamp_align
 Capture start time alignment in seconds. If set to nonzero, input frames are dropped till the system timestamp aligns with configured value. Alignment difference of up to one frame duration is tolerated. This is useful for maintaining input synchronization across N different hardware devices deployed for ’N-way’ redundancy. The system time of different hardware devices should be synchronized with protocols such as NTP or PTP, before using this option. Note that this method is not foolproof. In some border cases input synchronization may not happen due to thread scheduling jitters in the OS. Either sync could go wrong by 1 frame or in a rarer case timestamp_align seconds. Defaults to ‘0’.
-
 
 */
 
