@@ -280,9 +280,13 @@ ListenEvent(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bRecvDat
 	{
 		loop,5
 		{
-			SetTimer, launch%A_index%, -1
-			WinActivate, % title%A_index%
-			winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%
+			if ch%A_Index%
+			{
+				SetTimer, launch%A_index%, -1
+				WinActivate, % title%A_index%
+				winmove, % title%A_index%,, % panel_start_position_x%A_index%, % panel_start_position_y%A_index%
+			}
+
 		}
 		SetTimer,previewstart,-3000
 	}
